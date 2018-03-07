@@ -1,0 +1,15 @@
+<ul class="publication-list">
+{% for paper in site.data.mypapers %}
+    <li>
+        <span class="publication-list-author">{{ paper.author }}</span>,
+        "<span class="publication-list-title">{{ paper.title }}</span>,"
+        in <span class="publication-list-in">{{ paper.in }}</span>,
+        <span class="publication-list-year">{{ paper.year }}</span>.
+        <span class="publication-list-link"><a href="downloads/pdf/{{ paper.pdf }}">pdf</a></span>
+    </li>
+{% endfor %}
+</ul>
+
+{% if false %}
+vim: tw=72 spell ft=liquid
+{% endif %}

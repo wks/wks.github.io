@@ -1,0 +1,58 @@
+- key: "WLB+:15"
+  author:   "Kunshan Wang, Yi Lin, Stephen M Blackburn, Michael Norrish and Antony L Hosking"
+  title:    "Draining the Swamp: Micro Virtual Machines as Solid Foundation for Language Development"
+  in:       "1st Summit oN Advances in Programming Languages (SNAPL 2015)"
+  year:     2015
+  pdf:      "uvm-snapl-2015.pdf"
+  abstract:
+    Many of today’s programming languages are broken. Poor performance, lack of
+    features and hard-to-reason-about semantics can cost dearly in software
+    maintenance and inefficient execution. The problem is only getting worse
+    with programming languages proliferating and hardware becoming more
+    complicated.
+
+    An important reason for this brokenness is that much of language design is
+    implementation-driven. The difficulties in implementation and insufficient
+    understanding of concepts bake bad designs into the language itself.
+    Concurrency, architectural details and garbage collection are three
+    fundamental concerns that contribute much to the complexities of
+    implementing managed languages.
+
+    We propose the micro virtual machine, a thin abstraction designed
+    specifically to relieve implementers of managed languages of the most
+    fundamental implementation challenges that currently impede good design.
+    The micro virtual machine targets abstractions over memory (garbage
+    collection), architecture (compiler backend), and concurrency. We motivate
+    the micro virtual machine and give an account of the design and initial
+    experience of a concrete instance, which we call Mu, built over a two year
+    period. Our goal is to remove an important barrier to performant and
+    semantically sound managed language design and implementation. 
+
+- key: "LWB+:15"
+  author:   "Yi Lin, Kunshan Wang, Stephen M Blackburn, Michael Norrish and Antony L Hosking"
+  title:    "Stop and Go: Understanding Yieldpoint Behavior"
+  in:       "Proceedings of the Fourteenth ACM SIGPLAN International Symposium on Memory Management, ISMM '15, Portland, OR, June 14, 2015"
+  year:     2015
+  pdf:      "uvm-snapl-2015.pdf"
+  abstract:
+    Yieldpoints are critical to the implementation of high performance garbage
+    collected languages, yet the design space is not well understood.
+    Yieldpoints allow a running program to be interrupted at well-defined
+    points in its execution, facilitating exact garbage collection, biased
+    locking, on-stack replacement, profiling, and other important virtual
+    machine behaviors. In this paper we identify and evaluate yieldpoint design
+    choices, including previously undocumented designs and optimizations. One
+    of the designs we identify opens new opportunities for very low overhead
+    profiling. We measure the frequency with which yieldpoints are executed and
+    establish a methodology for evaluating the common case execution time
+    overhead. We also measure the median and worst case time-to-yield. We find
+    that Java benchmarks execute about 100 M yieldpoints per second, of which
+    about 1/20000 are taken. The average execution time overhead for untaken
+    yieldpoints on the VM we use ranges from 2.5% to close to zero on modern
+    hardware, depending on the design, and we find that the designs trade off
+    total overhead with worst case time-to-yield. This analysis gives new
+    insight into a critical but overlooked aspect of garbage collector
+    implementation, and identifies a new optimization and new opportunities for
+    very low overhead profiling. 
+
+# vim: tw=0 ts=2 sw=2 sts=2 et

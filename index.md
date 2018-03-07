@@ -33,15 +33,7 @@ tool for extracting text contents from HTML documents.
 
 ## Publications
 
-K. Wang, Y. Lin, S. M. Blackburn, M. Norrish, and A. L. Hosking,
-"**Draining the Swamp: Micro Virtual Machines as Solid Foundation for Language Development,**"
-in *1st Summit on Advances in Programming Languages (SNAPL 2015)*, 2015.
-[pdf](downloads/pdf/uvm-snapl-2015.pdf)
-
-Y. Lin, K. Wang, S. M. Blackburn, M. Norrish, and A. L. Hosking,
-"**Stop and Go: Understanding Yieldpoint Behavior,**"
-in *Proceedings of the Fourteenth ACM SIGPLAN International Symposium on Memory Management, ISMM '15, Portland, OR, June 14, 2015*, 2015. 
-[pdf](downloads/pdf/yieldpoint-ismm-2015.pdf)
+{% include publication_list.html %}
 
 ## Contact
 
