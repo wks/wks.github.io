@@ -6,10 +6,23 @@ layout: default
 title: Home
 ---
 
-## Research
+## About Me
 
-My research interests include the implementation of programming
-languages, especially those with garbage collection.
+I am currently employed in [Huawei](https://www.huawei.com) as a Senior
+Engineer.
+
+I was a PhD student in the
+[College of Engineering and Computer Science](https://cecs.anu.edu.au/)
+in the [Australian National University](http://www.anu.edu.au/).  My
+supervisor was
+[Steve Blackburn](http://users.cecs.anu.edu.au/~steveb/).
+My research interest is the design and implementation of managed
+languages, i.e. the kind of languages that usually run on virtual
+machines and usually use garbage collection.  My
+[thesis](http://hdl.handle.net/1885/147871) introduced the abstraction
+layer of [micro virtual machines](https://microvm.org/) which aim to
+allow the development of higher-quality, higher-performance managed
+languages.
 
 ## Projects
 
