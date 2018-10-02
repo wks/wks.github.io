@@ -1,0 +1,115 @@
+{% case include.key %}
+
+{% when "Kunshan17" %}
+
+<p>Today new programming languages proliferate, but many of them suffer from
+poor performance and inscrutable semantics.  We assert that the root of many of
+the performance and semantic problems of today's languages is that language
+implementation is extremely difficult.  This thesis the fundamental challenges
+of efficiently developing high-level managed languages.</p>
+
+<p>Modern high-level languages provide abstractions over execution, memory
+management and concurrency. It requires enormous intellectual capability and
+engineering effort to properly manage these concerns.  Lacking such resources,
+developers usually choose naive implementation approaches in the early stages
+of language design, a strategy which too often has long-term consequences,
+hindering the future development of the language.  Existing language
+development platforms have failed to provide the right level of abstraction,
+and forced implementers to reinvent low-level mechanisms in order to obtain
+performance.</p>
+
+<p>My thesis is that the introduction of micro virtual machines will allow the
+development of higher-quality, high-performance managed languages.</p>
+
+<p>The first contribution of this thesis is the design of Mu, with the
+specification of Mu as the main outcome.  Mu is the first micro virtual
+machine, a robust, performant, and light-weight abstraction over just three
+concerns\: execution, concurrency and garbage collection.  Such a foundation
+attacks three of the most fundamental and challenging issues that face existing
+language designs and implementations, leaving the language implementers free to
+focus on the higher levels of their language design.</p>
+
+<p>The second contribution is an in-depth analysis of on-stack replacement and
+its efficient implementation.  This low-level mechanism underpins run-time
+feedback-directed optimisation, which is key to the efficient implementation of
+dynamic languages.</p>
+
+<p>The third contribution is demonstrating the viability of Mu through RPython,
+a real-world non-trivial language implementation.  We also did some preliminary
+research of GHC as a Mu client.</p>
+
+<p>We have created the Mu specification and its reference implementation, both
+of which are open-source.  We show that that Mu's on-stack replacement API can
+gracefully support dynamic languages such as JavaScript, and it is
+implementable on concrete hardware.  Our RPython client has been able to
+translate and execute non-trivial RPython programs, and can run the RPySOM
+interpreter and the core of the PyPy interpreter.</p>
+
+<p>With micro virtual machines providing a low-level substrate, language
+developers now have the option to build their next language on a micro virtual
+machine.  We believe that the quality of programming languages will be improved
+as a result.</p>
+
+{% when "WBH18" %}
+
+<p>On-stack replacement (OSR) is a performance-critical technology for many
+languages, especially dynamic languages. Conventional wisdom, apparent in
+JavaScript engines such as V8 and SpiderMonkey, is that OSR must be implemented
+in a low-level (i.e., in assembly) and language-specific way.</p>
+
+<p>This paper presents an OSR abstraction based on Swapstack, materialized as
+the API for a low-level virtual machine, and shows how the abstraction of
+resumption protocols facilitates an elegant implementation of this API on real
+hardware. Using an experimental JavaScript implementation, we demonstrate that
+this API enables the language implementation to perform OSR without the need to
+deal with machine-level details. We also show that the API itself is
+implementable on concrete hardware. This work helps crystallize OSR
+abstractions and, by providing a reusable implementation, brings OSR within
+reach for more language implementers.</p>
+
+{% when "LWB15" %}
+
+<p>Yieldpoints are critical to the implementation of high performance garbage
+collected languages, yet the design space is not well understood.  Yieldpoints
+allow a running program to be interrupted at well-defined points in its
+execution, facilitating exact garbage collection, biased locking, on-stack
+replacement, profiling, and other important virtual machine behaviors. In this
+paper we identify and evaluate yieldpoint design choices, including previously
+undocumented designs and optimizations. One of the designs we identify opens
+new opportunities for very low overhead profiling. We measure the frequency
+with which yieldpoints are executed and establish a methodology for evaluating
+the common case execution time overhead. We also measure the median and worst
+case time-to-yield. We find that Java benchmarks execute about 100 M
+yieldpoints per second, of which about 1/20000 are taken. The average execution
+time overhead for untaken yieldpoints on the VM we use ranges from 2.5% to
+close to zero on modern hardware, depending on the design, and we find that the
+designs trade off total overhead with worst case time-to-yield. This analysis
+gives new insight into a critical but overlooked aspect of garbage collector
+implementation, and identifies a new optimization and new opportunities for
+very low overhead profiling.</p>
+ 
+{% when "WLB15" %}
+
+<p>Many of today’s programming languages are broken. Poor performance, lack of
+features and hard-to-reason-about semantics can cost dearly in software
+maintenance and inefficient execution. The problem is only getting worse with
+programming languages proliferating and hardware becoming more complicated.</p>
+
+<p>An important reason for this brokenness is that much of language design is
+implementation-driven. The difficulties in implementation and insufficient
+understanding of concepts bake bad designs into the language itself.
+Concurrency, architectural details and garbage collection are three fundamental
+concerns that contribute much to the complexities of implementing managed
+languages.</p>
+
+<p>We propose the micro virtual machine, a thin abstraction designed
+specifically to relieve implementers of managed languages of the most
+fundamental implementation challenges that currently impede good design.  The
+micro virtual machine targets abstractions over memory (garbage collection),
+architecture (compiler backend), and concurrency. We motivate the micro virtual
+machine and give an account of the design and initial experience of a concrete
+instance, which we call Mu, built over a two year period. Our goal is to remove
+an important barrier to performant and semantically sound managed language
+design and implementation.</p>
+
+{% endcase %}
