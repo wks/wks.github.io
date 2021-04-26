@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <link rel="stylesheet" href="/assets/css/style-publications.css">
+    <script type="text/javascript" src="/assets/js/jquery-3.6.0.min.js" charset="utf-8"></script>
+
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Home | Kunshan Wang</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Home" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Kunshan Wang’s Personal Web Site" />
+<meta property="og:description" content="Kunshan Wang’s Personal Web Site" />
+<link rel="canonical" href="/" />
+<meta property="og:url" content="/" />
+<meta property="og:site_name" content="Kunshan Wang" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Home" />
+<script type="application/ld+json">
+{"headline":"Home","@type":"WebSite","url":"/","description":"Kunshan Wang’s Personal Web Site","name":"Kunshan Wang","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <a id="a-title" href="/">
+          <h1>Kunshan Wang</h1>
+        </a>
+        <h2>Kunshan Wang's Personal Web Site</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/wks" class="btn btn-github"><span class="icon"></span>My GitHub Profile</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h2 id="about-me">About Me</h2>
+
+<p>I am a programming language and virtual machine enthusiast.</p>
+
+<p>I got my PhD degree from the <a href="http://www.anu.edu.au/">Australian National
+University</a>.  I designed the <a href="https://microvm.github.io/">Mu micro virtual
+machine</a>.  You can find my publications here.</p>
+
+<p>I worked for <a href="https://www.huawei.com/">Huawei</a> before.  The <a href="https://gitee.com/openarkcompiler/OpenArkCompiler">Open Ark
+Compiler</a> still
+contains some of my code.  (No.  I don’t like naive reference counting.
+Yes.  I understand naive RC has performance problems.)</p>
+
+<p>You can find my fun projects <a href="https://github.com/wks">on GitHub</a>.</p>
+
+<h2 id="publications">Publications</h2>
+
+<ul class="publication-list">
+
+    <li class="publication-item">
+        <div class="publication-line">
+            <span class="publication-list-author">Kunshan Wang, Stephen M Blackburn, Antony L Hosking and Michael Norrish</span>,
+            "<span class="publication-list-title">Hop, Skip, &amp; Jump: Practical On-Stack Replacement for a Cross-Platform Language-Neutral VM</span>,"
+            
+            in <span class="publication-list-in">14th ACM SIGPLAN/SIGOPS International Conference on Virtual Execution Environments (VEE 2018), March 24–25, 2018, Williamsburg, VA, USA.</span>,
+            
+            <span class="publication-list-year">2018</span>.
+            <span class="publication-list-link"><a href="downloads/pdf/osr-vee-2018.pdf">pdf</a></span>
+            <span class="publication-list-abs-tog"><a class="abstract-toggle" href="#abstract-WBH18">abstract</a></span>
+        </div>
+        <div class="publication-abstract" id="abstract-WBH18">
+            <p>On-stack replacement (OSR) is a performance-critical technology for many
+languages, especially dynamic languages. Conventional wisdom, apparent in
+JavaScript engines such as V8 and SpiderMonkey, is that OSR must be implemented
+in a low-level (i.e., in assembly) and language-specific way.</p>
+
+<p>This paper presents an OSR abstraction based on Swapstack, materialized as the
+API for a low-level virtual machine, and shows how the abstraction of
+resumption protocols facilitates an elegant implementation of this API on real
+hardware. Using an experimental JavaScript implementation, we demonstrate that
+this API enables the language implementation to perform OSR without the need to
+deal with machine-level details. We also show that the API itself is
+implementable on concrete hardware. This work helps crystallize OSR
+abstractions and, by providing a reusable implementation, brings OSR within
+reach for more language implementers.</p>
+
+        </div>
+    </li>
+
+    <li class="publication-item">
+        <div class="publication-line">
+            <span class="publication-list-author">Kunshan Wang</span>,
+            "<span class="publication-list-title">Micro Virtual Machines: A Solid Foundation for Managed Language Implementation</span>,"
+            
+            Ph.D. thesis, <span class="publication-list-in">College of Engineering and Computer Science, The Australian National University</span>,
+            
+            <span class="publication-list-year">2017</span>.
+            <span class="publication-list-link"><a href="downloads/pdf/wang-thesis-2018.pdf">pdf</a></span>
+            <span class="publication-list-abs-tog"><a class="abstract-toggle" href="#abstract-">abstract</a></span>
+        </div>
+        <div class="publication-abstract" id="abstract-">
+            <p>Today new programming languages proliferate, but many of them suffer from poor
+performance and inscrutable semantics.  We assert that the root of many of the
+performance and semantic problems of today’s languages is that language
+implementation is extremely difficult.  This thesis the fundamental challenges
+of efficiently developing high-level managed languages.</p>
+
+<p>Modern high-level languages provide abstractions over execution, memory
+management and concurrency. It requires enormous intellectual capability and
+engineering effort to properly manage these concerns.  Lacking such resources,
+developers usually choose naive implementation approaches in the early stages
+of language design, a strategy which too often has long-term consequences,
+hindering the future development of the language.  Existing language
+development platforms have failed to provide the right level of abstraction,
+and forced implementers to reinvent low-level mechanisms in order to obtain
+performance.</p>
+
+<p>My thesis is that the introduction of micro virtual machines will allow the
+development of higher-quality, high-performance managed languages.</p>
+
+<p>The first contribution of this thesis is the design of Mu, with the
+specification of Mu as the main outcome.  Mu is the first micro virtual
+machine, a robust, performant, and light-weight abstraction over just three
+concerns: execution, concurrency and garbage collection.  Such a foundation
+attacks three of the most fundamental and challenging issues that face existing
+language designs and implementations, leaving the language implementers free to
+focus on the higher levels of their language design.</p>
+
+<p>The second contribution is an in-depth analysis of on-stack replacement and its
+efficient implementation.  This low-level mechanism underpins run-time
+feedback-directed optimisation, which is key to the efficient implementation of
+dynamic languages.</p>
+
+<p>The third contribution is demonstrating the viability of Mu through RPython,
+a real-world non-trivial language implementation.  We also did some preliminary
+research of GHC as a Mu client.</p>
+
+<p>We have created the Mu specification and its reference implementation, both
+of which are open-source.  We show that that Mu’s on-stack replacement API can
+gracefully support dynamic languages such as JavaScript, and it is
+implementable on concrete hardware.  Our RPython client has been able to
+translate and execute non-trivial RPython programs, and can run the RPySOM
+interpreter and the core of the PyPy interpreter.</p>
+
+<p>With micro virtual machines providing a low-level substrate, language
+developers now have the option to build their next language on a micro virtual
+machine.  We believe that the quality of programming languages will be improved
+as a result.</p>
+
+
+        </div>
+    </li>
+
+    <li class="publication-item">
+        <div class="publication-line">
+            <span class="publication-list-author">Yi Lin, Kunshan Wang, Stephen M Blackburn, Michael Norrish and Antony L Hosking</span>,
+            "<span class="publication-list-title">Stop and Go: Understanding Yieldpoint Behavior</span>,"
+            
+            in <span class="publication-list-in">Proceedings of the Fourteenth ACM SIGPLAN International Symposium on Memory Management (ISMM 2015), Portland, OR, June 14, 2015</span>,
+            
+            <span class="publication-list-year">2015</span>.
+            <span class="publication-list-link"><a href="downloads/pdf/yieldpoint-ismm-2015.pdf">pdf</a></span>
+            <span class="publication-list-abs-tog"><a class="abstract-toggle" href="#abstract-LWB15">abstract</a></span>
+        </div>
+        <div class="publication-abstract" id="abstract-LWB15">
+            <p>Yieldpoints are critical to the implementation of high performance garbage
+collected languages, yet the design space is not well understood.  Yieldpoints
+allow a running program to be interrupted at well-defined points in its
+execution, facilitating exact garbage collection, biased locking, on-stack
+replacement, profiling, and other important virtual machine behaviors. In this
+paper we identify and evaluate yieldpoint design choices, including previously
+undocumented designs and optimizations. One of the designs we identify opens
+new opportunities for very low overhead profiling. We measure the frequency
+with which yieldpoints are executed and establish a methodology for evaluating
+the common case execution time overhead. We also measure the median and worst
+case time-to-yield. We find that Java benchmarks execute about 100 M
+yieldpoints per second, of which about 1/20000 are taken. The average execution
+time overhead for untaken yieldpoints on the VM we use ranges from 2.5% to
+close to zero on modern hardware, depending on the design, and we find that the
+designs trade off total overhead with worst case time-to-yield. This analysis
+gives new insight into a critical but overlooked aspect of garbage collector
+implementation, and identifies a new optimization and new opportunities for
+very low overhead profiling.</p>
+
+
+        </div>
+    </li>
+
+    <li class="publication-item">
+        <div class="publication-line">
+            <span class="publication-list-author">Kunshan Wang, Yi Lin, Stephen M Blackburn, Michael Norrish and Antony L Hosking</span>,
+            "<span class="publication-list-title">Draining the Swamp: Micro Virtual Machines as Solid Foundation for Language Development</span>,"
+            
+            in <span class="publication-list-in">1st Summit oN Advances in Programming Languages (SNAPL 2015)</span>,
+            
+            <span class="publication-list-year">2015</span>.
+            <span class="publication-list-link"><a href="downloads/pdf/uvm-snapl-2015.pdf">pdf</a></span>
+            <span class="publication-list-abs-tog"><a class="abstract-toggle" href="#abstract-WLB15">abstract</a></span>
+        </div>
+        <div class="publication-abstract" id="abstract-WLB15">
+            <p>Many of today’s programming languages are broken. Poor performance, lack of
+features and hard-to-reason-about semantics can cost dearly in software
+maintenance and inefficient execution. The problem is only getting worse with
+programming languages proliferating and hardware becoming more complicated.</p>
+
+<p>An important reason for this brokenness is that much of language design is
+implementation-driven. The difficulties in implementation and insufficient
+understanding of concepts bake bad designs into the language itself.
+Concurrency, architectural details and garbage collection are three fundamental
+concerns that contribute much to the complexities of implementing managed
+languages.</p>
+
+<p>We propose the micro virtual machine, a thin abstraction designed
+specifically to relieve implementers of managed languages of the most
+fundamental implementation challenges that currently impede good design.  The
+micro virtual machine targets abstractions over memory (garbage collection),
+architecture (compiler backend), and concurrency. We motivate the micro virtual
+machine and give an account of the design and initial experience of a concrete
+instance, which we call Mu, built over a two year period. Our goal is to remove
+an important barrier to performant and semantically sound managed language
+design and implementation.</p>
+
+        </div>
+    </li>
+
+</ul>
+
+<script type="text/javascript">
+    $(".abstract-toggle").click(function() {
+        $($(this).attr("href")).toggle();
+        return false;
+    });
+</script>
+
+<h2 id="contact">Contact</h2>
+
+<p>Email: wks1986 AT gmail DOT com</p>
+
+
+      </section>
+    </div>
+  </body>
+</html>
