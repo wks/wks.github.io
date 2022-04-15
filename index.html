@@ -6,22 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/assets/css/style.css?v=">
     <link rel="stylesheet" href="/assets/css/style-publications.css">
-    <script type="text/javascript" src="/assets/js/jquery-3.6.0.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/assets/js/jquery-3.6.0.min.js" charset="utf-8"></script>
 
-<!-- Begin Jekyll SEO tag v2.7.1 -->
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Home | Kunshan Wang</title>
-<meta name="generator" content="Jekyll v4.2.0" />
+<meta name="generator" content="Jekyll v4.2.2" />
 <meta property="og:title" content="Home" />
+<meta name="author" content="Kunshan Wang" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Kunshan Wang’s Personal Web Site" />
 <meta property="og:description" content="Kunshan Wang’s Personal Web Site" />
 <link rel="canonical" href="/" />
 <meta property="og:url" content="/" />
 <meta property="og:site_name" content="Kunshan Wang" />
+<meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Home" />
 <script type="application/ld+json">
-{"headline":"Home","@type":"WebSite","description":"Kunshan Wang’s Personal Web Site","url":"/","name":"Kunshan Wang","@context":"https://schema.org"}</script>
+{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"Kunshan Wang"},"description":"Kunshan Wang’s Personal Web Site","headline":"Home","name":"Kunshan Wang","url":"/"}</script>
 <!-- End Jekyll SEO tag -->
 
   </head>
@@ -36,6 +39,7 @@
         <h2>Kunshan Wang's Personal Web Site</h2>
 
         <section id="downloads">
+          <a href="/blog/">Blog</a>
           <a href="https://github.com/wks" class="btn btn-github"><span class="icon"></span>My GitHub Profile</a>
         </section>
       </div>
@@ -47,14 +51,20 @@
 
 <p>I am a programming language and virtual machine enthusiast.</p>
 
-<p>I got my PhD degree from the <a href="http://www.anu.edu.au/">Australian National
-University</a>.  I designed the <a href="https://microvm.github.io/">Mu micro virtual
-machine</a>.  You can find my publications here.</p>
+<p>I am a contributor to the <a href="https://www.mmtk.io/">Memory Management Toolkit (MMTk)</a>
+project. I am actively developing a <a href="https://github.com/mmtk/mmtk-ruby">MMTk binding for Ruby</a>
+so that the <a href="https://www.ruby-lang.org/">Ruby</a> interpreter can use MMTk as its garbage
+collection backend.</p>
 
-<p>I worked for <a href="https://www.huawei.com/">Huawei</a> before.  The <a href="https://gitee.com/openarkcompiler/OpenArkCompiler">Open Ark
-Compiler</a> still
-contains some of my code.  (No.  I don’t like naive reference counting.
-Yes.  I understand naive RC has performance problems.)</p>
+<p>I got my PhD degree from the <a href="https://www.anu.edu.au/">Australian National University</a>.  I
+designed the <a href="https://microvm.github.io/">Mu micro virtual machine</a>.  You can find my
+publications here.</p>
+
+<p>I worked for <a href="https://www.huawei.com/">Huawei</a> before.  The <a href="https://gitee.com/openarkcompiler/OpenArkCompiler">Open Ark Compiler</a>
+still contains some of my code.  However, having participated in that
+project does not mean I appreciate its design choices, especially <a href="https://gitee.com/openarkcompiler/OpenArkCompiler/blob/master/src/mrt/compiler-rt/include/collector/collector_naiverc.h">the
+use of naive reference counting</a> as the garbage
+collection mechanism.</p>
 
 <p>You can find my fun projects <a href="https://github.com/wks">on GitHub</a>.</p>
 
@@ -101,9 +111,9 @@ reach for more language implementers.</p>
             
             <span class="publication-list-year">2017</span>.
             <span class="publication-list-link"><a href="downloads/pdf/wang-thesis-2018.pdf">pdf</a></span>
-            <span class="publication-list-abs-tog"><a class="abstract-toggle" href="#abstract-">abstract</a></span>
+            <span class="publication-list-abs-tog"><a class="abstract-toggle" href="#abstract-Wang2017">abstract</a></span>
         </div>
-        <div class="publication-abstract" id="abstract-">
+        <div class="publication-abstract" id="abstract-Wang2017">
             <p>Today new programming languages proliferate, but many of them suffer from poor
 performance and inscrutable semantics.  We assert that the root of many of the
 performance and semantic problems of today’s languages is that language

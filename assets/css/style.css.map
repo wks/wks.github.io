@@ -3,9 +3,9 @@
 	"file": "style.css",
 	"sources": [
 		"style.scss",
-		"vendor/bundle/ruby/3.0.0/gems/jekyll-theme-hacker-0.1.2/_sass/jekyll-theme-hacker.scss",
-		"vendor/bundle/ruby/3.0.0/gems/jekyll-theme-hacker-0.1.2/_sass/rouge-base16-dark.scss",
-		"vendor/bundle/ruby/3.0.0/gems/jekyll-theme-hacker-0.1.2/_sass/_default_colors.scss"
+		"vendor/bundle/ruby/3.1.0/gems/jekyll-theme-hacker-0.2.0/_sass/jekyll-theme-hacker.scss",
+		"vendor/bundle/ruby/3.1.0/gems/jekyll-theme-hacker-0.2.0/_sass/rouge-base16-dark.scss",
+		"vendor/bundle/ruby/3.1.0/gems/jekyll-theme-hacker-0.2.0/_sass/_default_colors.scss"
 	],
 	"sourcesContent": [
 		"@import 'jekyll-theme-hacker';\n",
