@@ -1,0 +1,12 @@
+{
+	"version": 3,
+	"file": "style-custom.css",
+	"sources": [
+		"style-custom.scss"
+	],
+	"sourcesContent": [
+		"// Blog posts\n.blog-post-list .excerpt {\n    font-size: smaller;\n}\n\n.blog-post-list .continue {\n    font-size: smaller;\n}\n\n// Inline code.  The text colour was too dark.\ncode.highlighter-rouge {\n  color: #cb90bf;\n}\n\n// But if it is part of an anchor, make it bluer, and make the shadow heavier.\na code.highlighter-rouge {\n  color: #8178eb;\n  text-shadow: 0 0 5px rgba(104, 182, 255, 0.67);\n}\n\n// Publications list\n.publication-list-author {\n}\n\n.publication-list-title {\n    font-weight: bold;\n}\n\n.publication-list-in {\n    font-style: italic;\n}\n\n.publication-abstract {\n    display: none;\n    padding-left: 2em;\n    padding-right: 2em;\n    padding-top: 1ex;\n    padding-bottom: 1ex;\n    font-size: 90%;\n}\n"
+	],
+	"names": [],
+	"mappings": "AACA,AAAA,eAAe,CAAC,QAAQ,CAAC,EACrB,SAAS,EAAE,OAAO,GACrB;;AAED,AAAA,eAAe,CAAC,SAAS,CAAC,EACtB,SAAS,EAAE,OAAO,GACrB;;AAGD,AAAA,IAAI,AAAA,kBAAkB,CAAC,EACrB,KAAK,EAAE,OAAO,GACf;;AAGD,AAAA,CAAC,CAAC,IAAI,AAAA,kBAAkB,CAAC,EACvB,KAAK,EAAE,OAAO,EACd,WAAW,EAAE,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,yBAAyB,GAC/C;;AAMD,AAAA,uBAAuB,CAAC,EACpB,WAAW,EAAE,IAAI,GACpB;;AAED,AAAA,oBAAoB,CAAC,EACjB,UAAU,EAAE,MAAM,GACrB;;AAED,AAAA,qBAAqB,CAAC,EAClB,OAAO,EAAE,IAAI,EACb,YAAY,EAAE,GAAG,EACjB,aAAa,EAAE,GAAG,EAClB,WAAW,EAAE,GAAG,EAChB,cAAc,EAAE,GAAG,EACnB,SAAS,EAAE,GAAG,GACjB"
+}
