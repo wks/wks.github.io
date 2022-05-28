@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-05-18T18:39:40+00:00</updated><id>/feed.xml</id><title type="html">Kunshan Wang</title><subtitle>Kunshan Wang&apos;s Personal Web Site</subtitle><author><name>Kunshan Wang</name></author><entry><title type="html">A Wrong Name: Fifteen Years of TransitiveClosure in MMTk</title><link href="/blog/2022/05/16/fifteen-years-transitiveclosure.html" rel="alternate" type="text/html" title="A Wrong Name: Fifteen Years of TransitiveClosure in MMTk" /><published>2022-05-16T00:00:00+00:00</published><updated>2022-05-16T00:00:00+00:00</updated><id>/blog/2022/05/16/fifteen-years-transitiveclosure</id><content type="html" xml:base="/blog/2022/05/16/fifteen-years-transitiveclosure.html"><![CDATA[<p>The <code class="language-plaintext highlighter-rouge">TransitiveClosure</code> interface in MMTk is confusing.  It is an amalgamation
-of two different interfaces, and should have been split.  However, no
-refactoring happened since it was introduced 15 years ago, when MMTk was still
-part of the JikesRVM…, until now.  What’s more interesting is why we ended up
-having an interface like that 15 years ago, and how we should fix it.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-05-28T09:46:43+00:00</updated><id>/feed.xml</id><title type="html">Kunshan Wang</title><subtitle>Kunshan Wang&apos;s Personal Web Site</subtitle><author><name>Kunshan Wang</name></author><entry><title type="html">A Wrong Name: Fifteen Years of TransitiveClosure in MMTk</title><link href="/blog/2022/05/16/fifteen-years-transitiveclosure.html" rel="alternate" type="text/html" title="A Wrong Name: Fifteen Years of TransitiveClosure in MMTk" /><published>2022-05-16T00:00:00+00:00</published><updated>2022-05-16T00:00:00+00:00</updated><id>/blog/2022/05/16/fifteen-years-transitiveclosure</id><content type="html" xml:base="/blog/2022/05/16/fifteen-years-transitiveclosure.html"><![CDATA[<p>The <code class="language-plaintext highlighter-rouge">TransitiveClosure</code> interface in MMTk is confusing.  It should have been
+split into two different interfaces, but not… until now.  What’s more
+interesting is how we ended up having an interface like that 15 years ago, and
+why it stayed that way since then.</p>
 
 <h2 id="mmtk">MMTk?</h2>
 
@@ -84,7 +83,7 @@ only implement the trait it needs, and not the <code class="language-plaintext h
 <p>Or, should we?</p>
 
 <p>To confirm this, let’s find their call sites, and see whether we ever use both
-methods at the same time..</p>
+methods at the same time.  The short answer is, no.</p>
 
 <h3 id="the-process_node-method">The process_node method</h3>
 
@@ -131,6 +130,8 @@ each reference field, of <code class="language-plaintext highlighter-rouge">obje
   <li><code class="language-plaintext highlighter-rouge">process_node</code> is only used by <code class="language-plaintext highlighter-rouge">trace_object</code>, and</li>
   <li><code class="language-plaintext highlighter-rouge">process_edge</code> is only used by <code class="language-plaintext highlighter-rouge">scan_object</code>.</li>
 </ul>
+
+<p>And nothing calls both <code class="language-plaintext highlighter-rouge">process_node</code> and <code class="language-plaintext highlighter-rouge">process_edge</code> at the same time.</p>
 
 <p>So let’s split them into two traits.</p>
 
@@ -236,15 +237,15 @@ of tracing is the <code class="language-plaintext highlighter-rouge">Trace</code
   <li><code class="language-plaintext highlighter-rouge">Space.traceObject</code> calls <code class="language-plaintext highlighter-rouge">TraceLocal.processNode</code> to enqueues newly visited
 objects,
     <ul>
-      <li>just like <code class="language-plaintext highlighter-rouge">XxxSpace::trace_object</code> calling <code class="language-plaintext highlighter-rouge">ObjectClosure.process_edge</code>
-in Rust MMTk.</li>
+      <li>just like <code class="language-plaintext highlighter-rouge">XxxSpace::trace_object</code> calling
+<code class="language-plaintext highlighter-rouge">ProcessEdgesWork.process_node</code> in Rust MMTk.</li>
     </ul>
   </li>
   <li><code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> calls <code class="language-plaintext highlighter-rouge">TraceLocal.processEdge</code> to process each
 reference field (edge),
     <ul>
-      <li>just like <code class="language-plaintext highlighter-rouge">Scanning::scan_object</code> calling
-<code class="language-plaintext highlighter-rouge">ProcessEdgesWork.process_edge</code> in Rust MMTk.</li>
+      <li>just like <code class="language-plaintext highlighter-rouge">Scanning::scan_object</code> calling <code class="language-plaintext highlighter-rouge">ObjectsClosure.process_edge</code>
+in Rust MMTk.</li>
     </ul>
   </li>
 </ul>
@@ -256,7 +257,7 @@ subclass.</p>
 one <code class="language-plaintext highlighter-rouge">TraceLocal</code> for different kinds of traces.)</em></small></p>
 
 <p>It looks like the <code class="language-plaintext highlighter-rouge">TransitiveClosure</code> is a proper interface for <code class="language-plaintext highlighter-rouge">TraceLocal</code>.
-Both <code class="language-plaintext highlighter-rouge">processNode</code> and <code class="language-plaintext highlighter-rouge">processEdge</code> are implemented.</p>
+It implements both <code class="language-plaintext highlighter-rouge">processNode</code> and <code class="language-plaintext highlighter-rouge">processEdge</code>.</p>
 
 <p>However, <code class="language-plaintext highlighter-rouge">TraceLocal</code> is the only class that implements both <code class="language-plaintext highlighter-rouge">processNode</code> and
 <code class="language-plaintext highlighter-rouge">processEdge</code>.  Other classes don’t.</p>
@@ -359,14 +360,14 @@ them contain a buffer (a remember set, or the tracing queue) where the
 
 <blockquote>
   <p><em>If some classes are just field visitors, why don’t we have a dedicated
-  interface for it, such as <code class="language-plaintext highlighter-rouge">FieldVisitor</code>?</em></p>
+  interface for it, and name it <code class="language-plaintext highlighter-rouge">FieldVisitor</code>?</em></p>
 </blockquote>
 
 <p>and</p>
 
 <blockquote>
   <p><em>If some classes are just places to enqueue objects, why don’t we have a
-  dedicated for it, interface like <code class="language-plaintext highlighter-rouge">ObjectBuffer</code>?</em></p>
+  dedicated interface for it, and name it <code class="language-plaintext highlighter-rouge">ObjectBuffer</code>?</em></p>
 </blockquote>
 
 <p><code class="language-plaintext highlighter-rouge">TransitiveClosure</code> has been there for 15 years.  Many developers have made
@@ -392,12 +393,13 @@ code in history.</p>
 and implementation.</p>
 
 <p><a href="https://github.com/JikesRVM/JikesRVM/tree/68e36aac633743a7930516eb4c7536240152dc1e">Back in 2003</a>, MMTk (was JMTk back then) and JikesRVM were
-more tightly coupled.  Unlike the modern <code class="language-plaintext highlighter-rouge">Scanning</code> interface, the <code class="language-plaintext highlighter-rouge">ScanObject</code>
-class back then contained concrete implementations directly. The
-<a href="https://github.com/JikesRVM/JikesRVM/blob/68e36aac633743a7930516eb4c7536240152dc1e/rvm/src/vm/memoryManagers/JMTk/vmInterface/ScanObject.java#L42"><code class="language-plaintext highlighter-rouge">ScanObject.scan</code></a> method enumerates reference field, and
-called directly to the <code class="language-plaintext highlighter-rouge">Plan.traceObjectLocation</code> static method, which does the
-load/traceObject/store sequence like our modern <code class="language-plaintext highlighter-rouge">ProcessEdgesWork::process_edge</code>
-method.  Everything was hard-wired.  The operation for visiting field was fixed.</p>
+more tightly coupled than they are today.  Unlike the modern <code class="language-plaintext highlighter-rouge">Scanning</code>
+interface, the <code class="language-plaintext highlighter-rouge">ScanObject</code> class back then contained concrete implementations
+directly. The <a href="https://github.com/JikesRVM/JikesRVM/blob/68e36aac633743a7930516eb4c7536240152dc1e/rvm/src/vm/memoryManagers/JMTk/vmInterface/ScanObject.java#L42"><code class="language-plaintext highlighter-rouge">ScanObject.scan</code></a> method enumerates
+reference fields, and directly calls the <code class="language-plaintext highlighter-rouge">Plan.traceObjectLocation</code> static
+method, which does the load/traceObject/store sequence like our modern
+<code class="language-plaintext highlighter-rouge">ProcessEdgesWork::process_edge</code> method.  Everything was hard-wired.  The
+operation for visiting field was fixed.</p>
 
 <p><a href="https://github.com/JikesRVM/JikesRVM/commit/e7bc7a0b35b96d3182a8cb53f9548c38c90de579">A commit in 2003</a> introduced the
 <a href="https://github.com/JikesRVM/JikesRVM/blob/e7bc7a0b35b96d3182a8cb53f9548c38c90de579/rvm/src/vm/memoryManagers/JMTk/vmInterface/ScanObject.java#L64"><code class="language-plaintext highlighter-rouge">ScanObject.enumeratePointers</code></a> method which calls back to
@@ -405,8 +407,8 @@ method.  Everything was hard-wired.  The operation for visiting field was fixed.
 degree of freedom of what to do with each field, instead of
 load/traceObject/store.</p>
 
-<p><a href="https://github.com/JikesRVM/JikesRVM/commit/e7195af9696795f20acb4eb841bc9beec8e7d412">Another commit in 2003</a> introduced the <code class="language-plaintext highlighter-rouge">Enumerate</code> class,
-and was subsequently renamed to <code class="language-plaintext highlighter-rouge">Enumerator</code> and <a href="https://github.com/JikesRVM/JikesRVM/commit/c2ff58e6a8499ad987ecb1c30a0f206f1036ef1c">made
+<p><a href="https://github.com/JikesRVM/JikesRVM/commit/e7195af9696795f20acb4eb841bc9beec8e7d412">Another commit in 2003</a> introduced the <code class="language-plaintext highlighter-rouge">Enumerate</code> class
+which was subsequently renamed to <code class="language-plaintext highlighter-rouge">Enumerator</code> and <a href="https://github.com/JikesRVM/JikesRVM/commit/c2ff58e6a8499ad987ecb1c30a0f206f1036ef1c">made fully
 abstract</a>.</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">abstract</span> <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Enumerator</span> <span class="kd">implements</span> <span class="nc">Uninterruptible</span> <span class="o">{</span>
@@ -435,7 +437,7 @@ Scanning class</a> before late 2006.</p>
 </code></pre></div></div>
 
 <p>Both <code class="language-plaintext highlighter-rouge">scanObject</code> and <code class="language-plaintext highlighter-rouge">enumeratePointers</code> enumerate reference fields in an
-object.  However, they are used differently.</p>
+object.  However, they are used in totally different places.</p>
 
 <h4 id="scanningscanobject">Scanning.scanObject</h4>
 
@@ -447,7 +449,8 @@ filed.</p>
 class</a>. There was no superclasses or interfaces
 like <code class="language-plaintext highlighter-rouge">TransitiveClosure</code> for it to extend/implement. (<code class="language-plaintext highlighter-rouge">Constants</code> is an
 all-static interface, and <code class="language-plaintext highlighter-rouge">Uninterruptible</code> is just a marker.)  This means
-<code class="language-plaintext highlighter-rouge">scanObject</code> only applies to subclasses of <code class="language-plaintext highlighter-rouge">TraceLocal</code>.</p>
+<code class="language-plaintext highlighter-rouge">scanObject</code> was only applicable to subclasses of <code class="language-plaintext highlighter-rouge">TraceLocal</code>, and nothing
+else.</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">TraceLocal</span> <span class="kd">implements</span> <span class="nc">Constants</span><span class="o">,</span> <span class="nc">Uninterruptible</span> <span class="o">{</span> <span class="c1">// no superclass</span>
     <span class="kd">public</span> <span class="kd">final</span> <span class="kt">void</span> <span class="nf">enqueue</span><span class="o">(</span><span class="nc">ObjectReference</span> <span class="n">object</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">InlinePragma</span> <span class="o">{</span> <span class="c1">// traceObject calls this</span>
@@ -520,7 +523,7 @@ refactoring.</p>
 
 <p>In late 2006, <a href="https://github.com/JikesRVM/JikesRVM/commit/64f538ca4d348f062f3afb313f519ffcbbbd22bd">someone created a commit</a> which
 introduced a new version of reference counting collector, and at the same time
-did “a huge refactoring”.</p>
+did “a huge refactoring” (see the commit message).</p>
 
 <p>This commit created a class named <code class="language-plaintext highlighter-rouge">TraceStep</code>.  <code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> then took
 <code class="language-plaintext highlighter-rouge">TraceStep</code> as parameter instead of <code class="language-plaintext highlighter-rouge">TraceLocal</code>.  The <code class="language-plaintext highlighter-rouge">enumeratePointers</code>
@@ -583,7 +586,7 @@ using <code class="language-plaintext highlighter-rouge">scanObject</code> from 
 applicable to all <code class="language-plaintext highlighter-rouge">TraceStep</code> instances alike, and was no longer coupled with
 <code class="language-plaintext highlighter-rouge">TraceLocal</code>. Good! Nicely done!</p>
 
-<p>What’s more, this commit cleverly found a concept that describes both
+<p>More over, this commit cleverly found a concept that describes both
 <code class="language-plaintext highlighter-rouge">TraceLocal</code> and the various operations in reference counting, such as “mark
 grey”, “scan black”, etc.  It was <strong>“TraceStep”</strong>.  Intuitively, all of them
 were steps of tracing.</p>
@@ -632,7 +635,7 @@ transitive closure”, and the motivations were “concurrent collection” and
 <p><code class="language-plaintext highlighter-rouge">TraceLocal</code> now extends <code class="language-plaintext highlighter-rouge">TransitiveClosure</code> instead of <code class="language-plaintext highlighter-rouge">TraceStep</code>, and</p>
 
 <ul>
-  <li>the <code class="language-plaintext highlighter-rouge">traceObjectLocation</code> method was renamed to <code class="language-plaintext highlighter-rouge">processNode</code>, and</li>
+  <li>the <code class="language-plaintext highlighter-rouge">traceObjectLocation</code> method was renamed to <code class="language-plaintext highlighter-rouge">processEdge</code>, and</li>
   <li>the <code class="language-plaintext highlighter-rouge">enqueue</code> method was renamed to <code class="language-plaintext highlighter-rouge">processNode</code>.</li>
 </ul>
 
@@ -664,11 +667,11 @@ transitive closure”, and the motivations were “concurrent collection” and
 <p>It remains the only class that overrides <code class="language-plaintext highlighter-rouge">processNode</code> but note <code class="language-plaintext highlighter-rouge">processEdge</code>
 in the history of JikesRVM, even today.</p>
 
-<p>With this change, <code class="language-plaintext highlighter-rouge">TransitiveClosure</code> started to serve purposes.</p>
+<p>With this change, <code class="language-plaintext highlighter-rouge">TransitiveClosure</code> started to serve two distinct purposes.</p>
 
 <ol>
-  <li>One was the callback for <code class="language-plaintext highlighter-rouge">scanObject</code>, and</li>
-  <li>the other was the place to enqueue an object after tracing it.</li>
+  <li>the callback for <code class="language-plaintext highlighter-rouge">scanObject</code>, and</li>
+  <li>the place to enqueue an object after tracing it.</li>
 </ol>
 
 <p>If a class was only used in one of the two cases, it would override only one of
@@ -763,7 +766,7 @@ other VMs, too.</p>
 
 <p>We later removed <code class="language-plaintext highlighter-rouge">TraceLocal</code> and introduced the work packet system.</p>
 
-<p>The work packet system presents each unit of work as a “packet” that can be
+<p>The work packet system represents each unit of work as a “packet” that can be
 scheduled on any GC worker thread.  The <code class="language-plaintext highlighter-rouge">TraceLocal</code> class was replaced by two
 work packets:</p>
 
@@ -833,7 +836,7 @@ intention of improving MMTk.</p>
 that.  When called back from <code class="language-plaintext highlighter-rouge">scan_object</code>, it allows us to do anything to
 reference fields.</p>
 
-<h3 id="have-we-refactored-scan_object-so-it-takes-a-simple-callback">Have we refactored scan_object so it takes a simple callback?</h3>
+<h3 id="have-we-refactored-scan_object-so-it-takes-a-simple-callback-instead-of-tracelocal">Have we refactored scan_object so it takes a simple callback instead of TraceLocal?</h3>
 
 <p>Yes.  When <a href="https://github.com/JikesRVM/JikesRVM/commit/64f538ca4d348f062f3afb313f519ffcbbbd22bd"><code class="language-plaintext highlighter-rouge">TraceStep</code></a> was introduced, We unified
 <code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> and <code class="language-plaintext highlighter-rouge">Scanning.enumeratePointers</code>.  <code class="language-plaintext highlighter-rouge">Scanning.scanObject</code>
@@ -912,9 +915,9 @@ really was, i.e. computing the transitive closure of an object graph!  A
 <p>But <code class="language-plaintext highlighter-rouge">TraceWriteBuffer</code> doesn’t override <code class="language-plaintext highlighter-rouge">processEdge</code>, and <code class="language-plaintext highlighter-rouge">RCZero</code> doesn’t
 override <code class="language-plaintext highlighter-rouge">processNode</code>!</p>
 
-<p>No worries.  We leave them “unimplemented”.</p>
+<p>No worries.  We leave them “unreachable”.</p>
 
-<p>“Unimplemented”?  That doesn’t sound right.</p>
+<p>“Unreachable”?  That doesn’t sound right.</p>
 
 <p>But it worked… for 15 years.</p>
 
@@ -927,13 +930,13 @@ override <code class="language-plaintext highlighter-rouge">processNode</code>!<
   <li><code class="language-plaintext highlighter-rouge">TraceLocal</code>, “mark grey”, “scan black”, <code class="language-plaintext highlighter-rouge">RCZero</code> and so on are all steps in
 tracing,</li>
   <li>and those trace steps process edges,</li>
-  <li>hence <code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> should accept <code class="language-plaintext highlighter-rouge">TraceStep</code>, so
-<code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> can give <code class="language-plaintext highlighter-rouge">TraceStep</code> edges to process.</li>
+  <li>hence <code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> should accept <code class="language-plaintext highlighter-rouge">TraceStep</code> as a call-back
+argument, so <code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> can give <code class="language-plaintext highlighter-rouge">TraceStep</code> edges to process.</li>
 </ol>
 
 <p>Wrong.</p>
 
-<p><code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> accepts a callback object not because the callback is a
+<p><code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> accepts a callback argument not because the callback is a
 step of tracing, but simply <strong>because the callback visits edges</strong>.</p>
 
 <p>I don’t really know what counts as a “trace step”.</p>
@@ -949,7 +952,8 @@ only?</li>
 <p>No matter what it is, isn’t it much easier to just say</p>
 
 <blockquote>
-  <p><em>“<code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> accepts it because it visits edges.”</em></p>
+  <p><em>“<code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> accepts it as a callback argument because it visits
+  edges.”</em></p>
 </blockquote>
 
 <h3 id="the-nature-of-interfaces">The nature of interfaces.</h3>
@@ -971,11 +975,12 @@ elements.  The closure receives the object.  That is the contract of the
 <code class="language-plaintext highlighter-rouge">foreach</code> method.  Whether it prints the element or how it prints the element is
 not part of the contract.</p>
 
-<p>So “Enumerator” was a right name.  It correctly describes the purpose of the
-object, that is, <em>“it enumerates fields”</em>, nothing more.  That’s all what
-<code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> need to care about.  It passes each field to the callback,
-and that’s it.  It should not assume what that callback object is.  Whether it
-is a <code class="language-plaintext highlighter-rouge">TraceLocal</code> or an RC operation is beyond its obligation.</p>
+<p>So “Enumerator” was a right name.  It correctly describes the role of the object
+in a <code class="language-plaintext highlighter-rouge">scanObject</code> invocation, that is, <em>“it enumerates fields”</em>, nothing more.
+That’s all what <code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> need to care about.  It passes each field
+to the callback, and that’s it.  It should not assume what that callback object
+does to each edge.  Whether it is a <code class="language-plaintext highlighter-rouge">TraceLocal</code> or an RC operation is beyond
+its obligation.</p>
 
 <p>“TraceStep” was wrong.  “TransitiveClosure” was also wrong.  Neither of them
 is what <code class="language-plaintext highlighter-rouge">Scanning.scanObject</code> cares about.</p>
@@ -1200,7 +1205,7 @@ about the code again and again, and fix the problems whenever we can.</p>
 
 <!--
 vim: tw=80
--->]]></content><author><name>Kunshan Wang</name></author><category term="blog" /><category term="mmtk" /><summary type="html"><![CDATA[The TransitiveClosure interface in MMTk is confusing. It is an amalgamation of two different interfaces, and should have been split. However, no refactoring happened since it was introduced 15 years ago, when MMTk was still part of the JikesRVM…, until now. What’s more interesting is why we ended up having an interface like that 15 years ago, and how we should fix it.]]></summary></entry><entry><title type="html">Hello world!</title><link href="/blog/2022/04/15/Hello-world.html" rel="alternate" type="text/html" title="Hello world!" /><published>2022-04-15T00:00:00+00:00</published><updated>2022-04-15T00:00:00+00:00</updated><id>/blog/2022/04/15/Hello-world</id><content type="html" xml:base="/blog/2022/04/15/Hello-world.html"><![CDATA[<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+-->]]></content><author><name>Kunshan Wang</name></author><category term="blog" /><category term="mmtk" /><summary type="html"><![CDATA[The TransitiveClosure interface in MMTk is confusing. It should have been split into two different interfaces, but not… until now. What’s more interesting is how we ended up having an interface like that 15 years ago, and why it stayed that way since then.]]></summary></entry><entry><title type="html">Hello world!</title><link href="/blog/2022/04/15/Hello-world.html" rel="alternate" type="text/html" title="Hello world!" /><published>2022-04-15T00:00:00+00:00</published><updated>2022-04-15T00:00:00+00:00</updated><id>/blog/2022/04/15/Hello-world</id><content type="html" xml:base="/blog/2022/04/15/Hello-world.html"><![CDATA[<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
 incididunt ut labore et dolore magna aliqua. A erat nam at lectus urna duis
 convallis convallis. Augue mauris augue neque gravida in fermentum et
 sollicitudin ac. Ante in nibh mauris cursus mattis molestie a. Cras pulvinar
