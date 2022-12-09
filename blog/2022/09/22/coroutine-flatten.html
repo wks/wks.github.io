@@ -11,7 +11,7 @@
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Traversing nested lists with coroutines, Rosetta Code style | Kunshan Wang</title>
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.1" />
 <meta property="og:title" content="Traversing nested lists with coroutines, Rosetta Code style" />
 <meta name="author" content="Kunshan Wang" />
 <meta property="og:locale" content="en_US" />
@@ -103,10 +103,10 @@ greatly w.r.t. the design of coroutines.</p>
 
 <h2 id="ruby-fibers-stackful-both-asymmetric-and-symmetric">Ruby fibers (stackful, both asymmetric and symmetric)</h2>
 
-<p><a href="https://ruby-doc.org/core-3.1.2/Fiber.html">Fibers</a> are “primitives for implementing light weight cooperative
+<p><a href="https://docs.ruby-lang.org/en/3.1/Fiber.html">Fibers</a> are “primitives for implementing light weight cooperative
 concurrency in Ruby”.</p>
 
-<p>Ruby fibers are stackful.  According to the <a href="https://ruby-doc.org/core-3.1.2/Fiber.html">documentation</a>:</p>
+<p>Ruby fibers are stackful.  According to the <a href="https://docs.ruby-lang.org/en/3.1/Fiber.html">documentation</a>:</p>
 
 <blockquote>
   <p>As opposed to other stackless light weight concurrency models, each fiber
@@ -119,8 +119,8 @@ the task in both modes below.</p>
 
 <h3 id="asymmetric">Asymmetric</h3>
 
-<p>The <a href="https://ruby-doc.org/core-3.1.2/Fiber.html#method-i-resume"><code class="language-plaintext highlighter-rouge">Fiber#resume</code></a> instance method resumes a fiber, and a subsequent call to
-the <a href="https://ruby-doc.org/core-3.1.2/Fiber.html#method-c-yield"><code class="language-plaintext highlighter-rouge">Fiber.yield</code></a> class method jumps back to the resumer.</p>
+<p>The <a href="https://docs.ruby-lang.org/en/3.1/Fiber.html#method-i-resume"><code class="language-plaintext highlighter-rouge">Fiber#resume</code></a> instance method resumes a fiber, and a subsequent call to
+the <a href="https://docs.ruby-lang.org/en/3.1/Fiber.html#method-c-yield"><code class="language-plaintext highlighter-rouge">Fiber.yield</code></a> class method jumps back to the resumer.</p>
 
 <figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
@@ -158,7 +158,7 @@ the <a href="https://ruby-doc.org/core-3.1.2/Fiber.html#method-c-yield"><code cl
 <span class="k">end</span>
 
 <span class="k">def</span> <span class="nf">fiber_traverse</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-  <span class="no">Fiber</span><span class="o">::</span><span class="n">new</span> <span class="k">do</span>
+  <span class="no">Fiber</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
     <span class="n">traverse</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">raise</span> <span class="no">StopIteration</span>
   <span class="k">end</span>
@@ -174,7 +174,7 @@ the <a href="https://ruby-doc.org/core-3.1.2/Fiber.html#method-c-yield"><code cl
 <span class="k">end</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
-<p>The <a href="https://ruby-doc.org/core-3.1.2/Enumerator.html"><code class="language-plaintext highlighter-rouge">Enumerator</code></a> class can automatically transform
+<p>The <a href="https://docs.ruby-lang.org/en/3.1/Enumerator.html"><code class="language-plaintext highlighter-rouge">Enumerator</code></a> class can automatically transform
 block-based visiting functions into fiber-based coroutine.  It uses fiber only
 when necessary.  It uses fiber when used as external iterators (calling <code class="language-plaintext highlighter-rouge">e.next</code>
 explicitly), but still uses call-back for internal iteration (<code class="language-plaintext highlighter-rouge">e.each { |v| ...
@@ -246,7 +246,7 @@ explicitly), but still uses call-back for internal iteration (<code class="langu
 
 <h3 id="symmetric">Symmetric</h3>
 
-<p>The <a href="https://ruby-doc.org/core-3.1.2/Fiber.html#method-i-transfer"><code class="language-plaintext highlighter-rouge">Fiber#transfer</code></a> method can switch to any fiber, but always needs an
+<p>The <a href="https://docs.ruby-lang.org/en/3.1/Fiber.html#method-i-transfer"><code class="language-plaintext highlighter-rouge">Fiber#transfer</code></a> method can switch to any fiber, but always needs an
 explicit fiber to switch to.  We can pass the current fiber to the new fiber
 when we create it, so it can remember which fiber to transfer back to.</p>
 
@@ -291,7 +291,7 @@ when we create it, so it can remember which fiber to transfer back to.</p>
 
 <span class="k">def</span> <span class="nf">fiber_traverse</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
   <span class="n">current</span> <span class="o">=</span> <span class="no">Fiber</span><span class="p">.</span><span class="nf">current</span>     <span class="c1"># get the current fiber</span>
-  <span class="no">Fiber</span><span class="o">::</span><span class="n">new</span> <span class="k">do</span>
+  <span class="no">Fiber</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
     <span class="n">traverse</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">current</span><span class="p">)</span>      <span class="c1"># pass the fiber as parent</span>
     <span class="k">raise</span> <span class="no">StopIteration</span>
   <span class="k">end</span>
@@ -2594,10 +2594,10 @@ swap-stack for compiled languages.</p>
 
 <h3 id="the-mu-micro-virtual-machine">The Mu micro virtual machine</h3>
 
-<p>I designed the <a href="https://microvm.github.io/">Mu micro virtual machine</a>, and it is the main part of [my
-PhD thesis].  Swap-stack is a very important mechanism of the Mu micro VM, and
-it is designed to be supported by the JIT compiler.  It enables the
-implementation of symmetric stackful coroutines, and it is the foundation of
+<p>I designed the <a href="https://microvm.github.io/">Mu micro virtual machine</a>, and it is the main part of <a href="https://wks.github.io/downloads/pdf/wang-thesis-2018.pdf">my
+PhD thesis</a>.  Swap-stack is a very important mechanism of the Mu
+micro VM, and it is designed to be supported by the JIT compiler.  It enables
+the implementation of symmetric stackful coroutines, and it is the foundation of
 other VM mechanisms, such as trapping and <a href="https://wks.github.io/downloads/pdf/osr-vee-2018.pdf">on-stack replacement
 (OSR)</a>.  If you are interested, read
 <a href="https://wks.github.io/downloads/pdf/wang-thesis-2018.pdf#subsection.5.3.6">Section 5.3.6</a> of <a href="https://wks.github.io/downloads/pdf/wang-thesis-2018.pdf">my thesis</a>.</p>
