@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=">
     <link rel="stylesheet" href="/assets/css/style-custom.css?v=">
 <script type="text/javascript" src="/assets/js/jquery-3.6.0.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/assets/js/toc.js" charset="utf-8"></script>
 
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
@@ -52,6 +53,11 @@
 <h1>Hello world!</h1>
 
 <p class="view">by Kunshan Wang</p>
+
+<div id="table-of-contents-box">
+    <div class="toc-title">Table of contents <a id="toc-toggle" href="">[show/hide]</a></div>
+    <div id="table-of-contents"></div>
+</div>
 
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
 incididunt ut labore et dolore magna aliqua. A erat nam at lectus urna duis
@@ -111,6 +117,19 @@ consequat id. Suspendisse ultrices gravida dictum fusce ut placerat orci nulla.<
 
 
 
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#table-of-contents').toc({
+        title: "",
+        showEffect: 'none'
+    });
+
+    $('#toc-toggle').click(function() {
+        $('#table-of-contents').toggle();
+        return false;
+    });
+});
+</script>
 
       </section>
     </div>

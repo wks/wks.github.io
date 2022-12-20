@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=">
     <link rel="stylesheet" href="/assets/css/style-custom.css?v=">
 <script type="text/javascript" src="/assets/js/jquery-3.6.0.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/assets/js/toc.js" charset="utf-8"></script>
 
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
@@ -52,6 +53,11 @@
 <h1>A Wrong Name: Fifteen Years of TransitiveClosure in MMTk</h1>
 
 <p class="view">by Kunshan Wang</p>
+
+<div id="table-of-contents-box">
+    <div class="toc-title">Table of contents <a id="toc-toggle" href="">[show/hide]</a></div>
+    <div id="table-of-contents"></div>
+</div>
 
 <p>The <code class="language-plaintext highlighter-rouge">TransitiveClosure</code> interface in MMTk is confusing.  It should have been
 split into two different interfaces, but not… until now.  What’s more
@@ -1295,6 +1301,19 @@ vim: tw=80
   <small>tags: <em>mmtk</em></small>
 
 
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#table-of-contents').toc({
+        title: "",
+        showEffect: 'none'
+    });
+
+    $('#toc-toggle').click(function() {
+        $('#table-of-contents').toggle();
+        return false;
+    });
+});
+</script>
 
       </section>
     </div>

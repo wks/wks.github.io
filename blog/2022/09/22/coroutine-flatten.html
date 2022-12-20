@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/assets/css/style.css?v=">
     <link rel="stylesheet" href="/assets/css/style-custom.css?v=">
 <script type="text/javascript" src="/assets/js/jquery-3.6.0.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/assets/js/toc.js" charset="utf-8"></script>
 
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
@@ -52,6 +53,11 @@
 <h1>Traversing nested lists with coroutines, Rosetta Code style</h1>
 
 <p class="view">by Kunshan Wang</p>
+
+<div id="table-of-contents-box">
+    <div class="toc-title">Table of contents <a id="toc-toggle" href="">[show/hide]</a></div>
+    <div id="table-of-contents"></div>
+</div>
 
 <p>I’ll try to use <strong>coroutines</strong> to traverse nested lists, Rosetta Code style.
 That means I’ll do it in many different programming languages and libraries,
@@ -2890,6 +2896,19 @@ vim: tw=80
   <small>tags: <em>coroutine,rosettacode</em></small>
 
 
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#table-of-contents').toc({
+        title: "",
+        showEffect: 'none'
+    });
+
+    $('#toc-toggle').click(function() {
+        $('#table-of-contents').toggle();
+        return false;
+    });
+});
+</script>
 
       </section>
     </div>
