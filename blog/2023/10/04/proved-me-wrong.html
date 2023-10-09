@@ -337,30 +337,31 @@ performance issues in GC, including the execution of <code class="language-plain
 table processing tasks, and the load-balancing problems in the <a href="https://github.com/mmtk/mmtk-ruby">MMTk-Ruby
 binding</a>.</p>
 
-<p>For example, if you see the following timeline, you know the handling of
-<code class="language-plaintext highlighter-rouge">obj_free</code> is the bottleneck.</p>
+<p>For example, when I saw the following timeline, I knew the handling of
+<code class="language-plaintext highlighter-rouge">obj_free</code> was the bottleneck.</p>
 
 <p><img src="/assets/img/proved-me-wrong/ruby-obj-free.png" alt="`obj_free` was the bottleneck in MMTk-Ruby" /></p>
 
-<p>When I see the following timeline (with manual annotation of which work packet
-created which), I know the load balancing of the transitive closure stage needs
+<p>When I saw the following timeline (with manual annotation of which work packet
+created which), I knew the load balancing of the transitive closure stage needed
 to be improved.</p>
 
 <p><img src="/assets/img/proved-me-wrong/ruby-load-balance.png" alt="bad load-balance during transitive closure" /></p>
 
-<p>And when I see the following timeline, I know the general load balancing is
-improved, but some objects take significantly longer to scan than other objects,
-and we should focus on those objects because they are the bottleneck.</p>
+<p>And when I saw the following timeline, I knew the general load balancing was
+improved, but some objects took significantly longer to scan than other objects,
+and I should focus on those objects because they were the bottleneck.</p>
 
 <p><img src="/assets/img/proved-me-wrong/ruby-scan-object.png" alt="some objects took longer to scan" /></p>
 
 <h2 id="the-tool">The tool</h2>
 
-<p>I thank Claire Huang, <a href="https://www.zcai.org/">Zixian Cai</a> and Prof. <a href="https://users.cecs.anu.edu.au/~steveb/">Steve Blackburn</a> for creating such
-a useful tool.</p>
+<p>I thank Claire Huang, <a href="https://www.zcai.org/">Zixian Cai</a>, and Prof. <a href="https://users.cecs.anu.edu.au/~steveb/">Steve Blackburn</a> for creating
+such a useful tool.</p>
 
-<p>The code has been <a href="https://github.com/mmtk/mmtk-core/commit/b6ffcddeef2407ed910dc1ef98e0d038cc4a1eb6">merged</a> into the master branch of <a href="https://github.com/mmtk/mmtk-core">mmtk-core</a>.
-Related tools and documentation can be found in <a href="https://github.com/mmtk/mmtk-core/tree/master/tools/tracing">this directory</a>.</p>
+<p>The tool is now publicly available.  The code has been <a href="https://github.com/mmtk/mmtk-core/commit/b6ffcddeef2407ed910dc1ef98e0d038cc4a1eb6">merged</a>
+into the master branch of <a href="https://github.com/mmtk/mmtk-core">mmtk-core</a>.  Related tools and documentation can be
+found in <a href="https://github.com/mmtk/mmtk-core/tree/master/tools/tracing">this directory</a>.</p>
 
 <p>The paper that describes this work has been accepted and will be published <a href="https://2023.splashcon.org/details/mplr-2023-papers/11/Improving-Garbage-Collection-Observability-with-Performance-Tracing">in
 the MPLR 2023 conference</a></p>
