@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <link rel="stylesheet" href="/assets/css/style-custom.css?v=">
+<script type="text/javascript" src="/assets/js/jquery-3.6.0.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/assets/js/toc.js" charset="utf-8"></script>
+
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>eBPF and Perfetto UI proved me wrong | Kunshan Wang</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="eBPF and Perfetto UI proved me wrong" />
+<meta name="author" content="Kunshan Wang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This blog post is about an experience of debugging MMTk using a tracing and visualisation tool based on eBPF and Perfetto UI. During debugging, I tried to guess what went wrong for many times, but the tool showed what actually happened and proved me wrong each time." />
+<meta property="og:description" content="This blog post is about an experience of debugging MMTk using a tracing and visualisation tool based on eBPF and Perfetto UI. During debugging, I tried to guess what went wrong for many times, but the tool showed what actually happened and proved me wrong each time." />
+<link rel="canonical" href="/blog/2023/10/04/proved-me-wrong.html" />
+<meta property="og:url" content="/blog/2023/10/04/proved-me-wrong.html" />
+<meta property="og:site_name" content="Kunshan Wang" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-10-04T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="eBPF and Perfetto UI proved me wrong" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Kunshan Wang"},"dateModified":"2023-10-04T00:00:00+00:00","datePublished":"2023-10-04T00:00:00+00:00","description":"This blog post is about an experience of debugging MMTk using a tracing and visualisation tool based on eBPF and Perfetto UI. During debugging, I tried to guess what went wrong for many times, but the tool showed what actually happened and proved me wrong each time.","headline":"eBPF and Perfetto UI proved me wrong","mainEntityOfPage":{"@type":"WebPage","@id":"/blog/2023/10/04/proved-me-wrong.html"},"url":"/blog/2023/10/04/proved-me-wrong.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <a id="a-title" href="/">
+          <h1>Kunshan Wang</h1>
+        </a>
+        <h2>Kunshan Wang's Personal Web Site</h2>
+
+        <section id="downloads">
+          <a href="/blog/">Blog</a>
+          <a href="https://github.com/wks" class="btn btn-github"><span class="icon"></span>My GitHub Profile</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <small>2023-10-04</small>
+<h1>eBPF and Perfetto UI proved me wrong</h1>
+
+<p class="view">by Kunshan Wang</p>
+
+<div id="table-of-contents-box">
+    <div class="toc-title">Table of contents <a id="toc-toggle" href="">[show/hide]</a></div>
+    <div id="table-of-contents"></div>
+</div>
+
+<p>This blog post is about an experience of debugging <a href="https://www.mmtk.io/">MMTk</a> using a tracing and
+visualisation tool based on eBPF and Perfetto UI.  During debugging, I tried to
+guess what went wrong for many times, but the tool showed what actually happened
+and proved me wrong each time.</p>
+
+<h2 id="the-anomaly">The anomaly</h2>
+
+<p>I made <a href="https://github.com/mmtk/mmtk-core/pull/794">a pull request</a> for MMTk-core.  It sped up all benchmarks in the
+DaCapo Benchmarks suite, except the <code class="language-plaintext highlighter-rouge">jython</code> benchmark which <a href="https://github.com/mmtk/mmtk-core/pull/794#issuecomment-1521633617">became 3x
+slower</a> in stop-the-world (STW) time (i.e. time spent doing
+garbage collection).</p>
+
+<p><small><em>In the following plot, <code class="language-plaintext highlighter-rouge">build3</code> is the baseline revision, <code class="language-plaintext highlighter-rouge">build1</code> is an
+intermediate commit, and <code class="language-plaintext highlighter-rouge">build2</code> contains my final change.  The time is
+normalised to <code class="language-plaintext highlighter-rouge">build3</code> for each benchmark.</em></small></p>
+
+<p><img src="/assets/img/proved-me-wrong/pr794-stw.png" alt="DaCapo results" /></p>
+
+<p>I could conclude that the <code class="language-plaintext highlighter-rouge">jython</code> benchmark had some abnormal behaviour and the
+overall result (<code class="language-plaintext highlighter-rouge">build2</code> in <code class="language-plaintext highlighter-rouge">geomean</code>) was still speeding up.  But the 3x
+slow-down was too significant to overlook.  I decided to investigate.</p>
+
+<h2 id="ebpf-based-tracing-and-visualisation">eBPF-based tracing and visualisation</h2>
+
+<p>Strangely, the slow-down was only observable on two of the testing machines in
+our laboratory.  When I re-ran the <code class="language-plaintext highlighter-rouge">jython</code> benchmark with <code class="language-plaintext highlighter-rouge">build1</code>, <code class="language-plaintext highlighter-rouge">build2</code>
+and <code class="language-plaintext highlighter-rouge">build3</code> on my laptop, their stop-the-world (STW) times were similar.  They
+were either equally good or equally bad.  I guessed they were equally bad.  I
+inferred that the problem was non-deterministic.  It may be triggered under some
+unknown conditions.</p>
+
+<p>The slow-down was in the STW time, which meant some GC activities became slower.
+But how would I know <em>which</em> GC activity was slow?</p>
+
+<p>At that time, my colleagues were developing a eBPF-based tracing tool which can
+record the duration of each work packet during a GC, and visualise them on a
+timeline.  Its overhead when not used was so low that we can leave the trace
+points in the code in release builds, and active them whenever we want to
+measure something.  I thought it was the perfect tool for my task.  Although the
+tool was still being developed, I asked my colleagues for a copy and gave it a
+try anyway.</p>
+
+<p>The tool included a patch to the MMTk Core source code which inserted USDT (user
+statically-defined tracing) tracepoints at important places.  They were compiled
+as <code class="language-plaintext highlighter-rouge">NOP</code> instructions, but could be patched at run time to execute custom code.
+I used the <code class="language-plaintext highlighter-rouge">bpftrace</code> command line utility to activate those tracepoints to
+record the start and the end of each work packet, then used a script to format
+the output into a JSON format which was then sent to Perfetto UI.  Perfetto UI
+showed what happened during a GC in a timeline.</p>
+
+<p>Actually, I observed two different timeline patterns from different GCs when
+running the <code class="language-plaintext highlighter-rouge">jython</code> benchmark.</p>
+
+<p>The first pattern (I called it the ‘kind 1’ GC) looked like this:</p>
+
+<p><img src="/assets/img/proved-me-wrong/pr794-gc-kind1.png" alt="timeline pattern of 'kind 1' GC" /></p>
+
+<p>This was a minor GC in a generational GC algorithm, and it was quite a typical
+one.</p>
+
+<p>The green arrows in Thread 192576 marked the start of each stage.</p>
+
+<ul>
+  <li>The <code class="language-plaintext highlighter-rouge">Prepare</code> stage happened before the green arrow near the ‘24.0792 s’
+mark, during which there were many work packets named <code class="language-plaintext highlighter-rouge">ScanXxxxRoot(s)</code>.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">Closure</code> stage happened between that green arrow and the next green
+arrow after the ‘24.0796 s’ mark, during which there were many green
+<code class="language-plaintext highlighter-rouge">GenNurseryProcessEdges</code> work packets.</li>
+  <li>Then there were some short intermediate stages, such as <code class="language-plaintext highlighter-rouge">FinalRefClosure</code>
+which handled finalization.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">Release</code> stage happened near the end of the GC between the ‘24.0797 s’
+and the ‘24.0798 s’ marks, where each worker executed some clean-up job.</li>
+</ul>
+
+<p>Since a minor GC does not trace much objects (it only traces the nursery), the
+<code class="language-plaintext highlighter-rouge">Closure</code> stage did not took much time.  A ‘kind 1’ GC typically takes only
+about 1 ms, despite the <code class="language-plaintext highlighter-rouge">ScanStackRoot</code> work packet in Thread 192587 and the
+<code class="language-plaintext highlighter-rouge">GenNurseryProcessEdges</code> packet in Thread 192581 being a bit too big due to an
+unrelated load-imbalance problem.</p>
+
+<p>The second pattern (I called it the ‘kind 2’ GC) looked like this:</p>
+
+<p><img src="/assets/img/proved-me-wrong/pr794-gc-kind2.png" alt="timeline pattern of 'kind 2' GC" /></p>
+
+<p>This was also a minor (nursery) GC, too, seen form packet name
+<code class="language-plaintext highlighter-rouge">GenNurseryProcessEdges</code>.  The <code class="language-plaintext highlighter-rouge">Prepare</code> stage and the <code class="language-plaintext highlighter-rouge">Closure</code> stage are
+similar to the ‘kind 1’.  (Please note the horizontal scale of the timeline.
+The <code class="language-plaintext highlighter-rouge">Prepare</code> and the <code class="language-plaintext highlighter-rouge">Closure</code> stages were in the far left of this plot, before
+the <code class="language-plaintext highlighter-rouge">Finalization</code> packet.)  What was interesting was the <code class="language-plaintext highlighter-rouge">FinalRefClosure</code>
+stage where finalization were done.  After the <code class="language-plaintext highlighter-rouge">Finalization</code> packet, lots of
+<code class="language-plaintext highlighter-rouge">GenNurseryProcessEdges</code> work packets were executed.  It was obvious that
+finalization resurrected many objects.  A ‘kind 2’ GC is significantly longer
+than a ‘kind 1’ GC.  It may take more than 15 ms to execute.</p>
+
+<p>Given that finalization is non-deterministic, we might infer that the slow-down
+was caused by an excessive amount of finalization due to non-deterministic
+execution.  Problem solved…, or was it?  I still needed to verify.</p>
+
+<h2 id="printing-out-the-gc-times">Printing out the GC times</h2>
+
+<p>I printed out the GC time of each GC in <code class="language-plaintext highlighter-rouge">jython</code> when running on a test machine
+in the lab.</p>
+
+<p>With 1500M heap size, the GC time (i.e. STW time) of the original code
+(<code class="language-plaintext highlighter-rouge">build3</code>) and my modification (<code class="language-plaintext highlighter-rouge">build2</code>) were:</p>
+
+<ul>
+  <li>Before: 2,2,1,8,1,2,9ms</li>
+  <li>After: 1,21,1,10,1,20,9ms</li>
+</ul>
+
+<p>So the GCs that took 21, 10, 20 and 9 ms should be doing finalization, right?</p>
+
+<p>I ran it on another test machine (with identical hardware) with 1500M heap, too:</p>
+
+<ul>
+  <li>Before: 2,1,1,11,1,3,8ms</li>
+  <li>After: 2,27,1,9,2,25,8ms</li>
+</ul>
+
+<p>The results were similar between two machines.  I then tried to reduce the heap
+size.</p>
+
+<p>When I reduce the heap size to 500M:</p>
+
+<ul>
+  <li>Before: 1,1,1,1,1,2,2,1,1,5,9,2,2,1,2,1,1,2,1,2,1,5,8,4</li>
+  <li>After: 1,1,1,1,1,30,1,1,1,4,8,1,1,1,1,1,1,27,1,1,1,3,8,4</li>
+</ul>
+
+<p>When I reduce the heap size to 250M:</p>
+
+<ul>
+  <li>Before: 1,1,2,2,2,1,1,2,1,1,2,1,3,1,2,2,1,1,1,1,2,4,5,6,4,1,1,2,1,1,2,1,1,1,2,2,1,2,2,2,2,2,1,1,1,1,1,2,1,1,4,7,5,4,2,2,</li>
+  <li>After: 1,1,1,1,1,1,1,1,1,1,2,1,29,1,1,1,2,1,1,1,1,4,6,6,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,2,25,1,1,1,1,1,1,1,1,1,4,5,5,4,1,1,</li>
+</ul>
+
+<p>If the slow-down were caused by excessive finalization, I would expect one build
+to have more GCs that had more than 15 ms of STW time.  But it was not the case.
+Two builds had the same number of GCs, and the GC time of each pair of
+corresponding GCs were similar, too, except two pairs.  No matter how large the
+heap size was, there were always exactly two GCs that took more than 20 ms in
+the ‘After’ case (i.e. <code class="language-plaintext highlighter-rouge">build2</code>, the build with my PR applied).  For other GCs,
+most of them took 1 ms and I assumed they were the ‘kind 1’ GCs; some of them
+took 5 ms to 10 ms and I guessed they were the ‘kind 2’ GCs.</p>
+
+<p>So the two 20+ ms GCs were interesting.  What happened during them?  Were they
+slow because of finalization, too?</p>
+
+<p>I re-ran the test at 250M heap size on my laptop.  Strange things happened.</p>
+
+<ul>
+  <li>Before: 1,1,1,1,1,2,1,1,1,1,1,2,1,2,2,1,2,2,2,2,1,2,1,5,7,7,6,1,2,1,1,1,2,1,1,1,2,1,2,2,2,1,1,2,2,2,1,2,2,2,1,1,2,2,2,1,5,7,6,5,1,2,2,</li>
+  <li>After: 2,1,1,1,1,1,1,1,2,1,1,1,2,2,2,1,2,2,2,2,1,1,1,7,8,7,5,1,1,2,1,1,1,1,1,1,2,2,1,1,1,2,1,2,2,2,1,1,1,1,1,1,1,1,1,4,6,6,6,4,1,1,</li>
+</ul>
+
+<p>The mysterious 20 ms GCs vanished!</p>
+
+<p>This meant those 20 ms GCs were definitely not ‘kind 2’ GCs because otherwise I
+would have observed them on my laptop.</p>
+
+<p>This also meant I could not capture those mysterious 20 ms GCs on my laptop
+using eBPF tracing.  I could only capture them on the lab machines.</p>
+
+<h2 id="manual-tracing">Manual tracing</h2>
+
+<p>Since I could not use eBPF tracing on the lab machine due to lack of root
+access, I manually instrumented the code to log the starts and ends of each work
+packets.  I printed the log in the same format as the output of the eBPF tool,
+used the same script to process the log into the JSON format, and fed the JSON
+into Perfetto UI.  Then a nice timeline came out.  (And you can try it by your
+self.  Load <a href="/assets/data/proved-me-wrong/log_manual2.txt.json.gz">this log file</a> into <a href="https://www.ui.perfetto.dev/">https://www.ui.perfetto.dev/</a> and
+browse the timeline interactively.)</p>
+
+<p><img src="/assets/img/proved-me-wrong/pr794-manual-perfetto-after.png" alt="the 'after' build, manually traced" /></p>
+
+<p>And that was a strange timeline, too.  Why was the <code class="language-plaintext highlighter-rouge">ProcessRegionModBuf</code> work
+packet so large?  The purpose of the <code class="language-plaintext highlighter-rouge">ProcessRegionModBuf</code> work packet is
+handling the write barriers for bulk accesses of arrays (such as
+<code class="language-plaintext highlighter-rouge">System.arraycopy()</code> in Java) between the last GC and this GC.</p>
+
+<p>There might be two possibilities:</p>
+
+<ol>
+  <li>The <code class="language-plaintext highlighter-rouge">jython</code> benchmark did call <code class="language-plaintext highlighter-rouge">System.arraycopy()</code> on a very large array,
+therefore the work packet should exist in order to process the write
+barrier.  However, it did not appear in the ‘Before’ build (<code class="language-plaintext highlighter-rouge">build3</code>) due to
+a bug.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">jython</code> benchmark did not copy large arrays at all, but a bug (probably
+introduced or triggered by my PR) caused the write barrier to erroneously
+record an access to a large array while it did not, resulting in an
+abnormally large <code class="language-plaintext highlighter-rouge">ProcessRegionModBuf</code> work packet.</li>
+</ol>
+
+<p>So which one was true?</p>
+
+<h2 id="hacking-the-write-barriers">Hacking the write barriers</h2>
+
+<p>I added a log at the place where a <code class="language-plaintext highlighter-rouge">ProcessRegionModBuf</code> work packet is created
+in order to see the sizes of the <code class="language-plaintext highlighter-rouge">ProcessRegionModBuf</code> work packets.</p>
+
+<p>When running on the lab machines,</p>
+
+<ul>
+  <li>in the ‘before’ build, all <code class="language-plaintext highlighter-rouge">ProcessRegionModBuf</code> work packets had lengths of
+0;</li>
+  <li>in the ‘after’ build, <code class="language-plaintext highlighter-rouge">ProcessRegionModBuf</code> came in all different sizes.</li>
+</ul>
+
+<p>When running on my laptop, all <code class="language-plaintext highlighter-rouge">ProcessRegionModBuf</code> work packets had lengths
+of 0.</p>
+
+<p>But it does not make sense to copy zero elements using <code class="language-plaintext highlighter-rouge">System.arraycopy()</code>!</p>
+
+<p>Then I had reasons to believe that there was a bug in the write barrier code so
+that in the ‘before’ build, the write barrier failed to record any accessed
+array regions, making the GC erroneously faster than it should have been.  In
+the ‘after’ build, the bug was not triggered, so the accessed array regions were
+recorded by write barriers as usual, resulting in a longer but actually normal
+STW time.  In other words, it was not my PR that made the STW time longer, but
+the STW time had been shorter than it should have been.</p>
+
+<p>One of my colleagues reminded me that there was an <a href="https://github.com/wenyuzhao/mmtk-openjdk/commit/1c384fd86ffe843afac779e85a98f6550a355923">un-merged
+commit</a> that fixes a bug in the write barrier code in the
+MMTK-OpenJDK binding.  It was intended to fix an unrelated bug, but it was still
+worth giving it a try.</p>
+
+<p>I cherry-picked that commit, and…  Voila!  It fixed the bug!  The ‘before’
+build then exhibited the two 20+ ms GCs, just like the ‘after’ build.</p>
+
+<ul>
+  <li>Before: 1,2,2,1,1,29,1,1,2,5,8,2,1,1,1,2,1,29,1,1,1,4,9,3,</li>
+</ul>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>At this point, we could draw the conclusion.  The STW time for the <code class="language-plaintext highlighter-rouge">jython</code>
+benchmark should have been 3x longer.  However, due to the bug fixed by <a href="https://github.com/wenyuzhao/mmtk-openjdk/commit/1c384fd86ffe843afac779e85a98f6550a355923">this
+commit</a>, the barrier did not record the bulk accesses to arrays
+properly, and therefore did less things than it should have done.  When I was
+running the DaCapo benchmarks at the beginning of this blog post, I set the heap
+size too large (1500M).  With such a large heap size, GC was only triggered a
+few times, and the proportion of write barrier handling became more significant
+in STW time.  Therefore the STW time for <code class="language-plaintext highlighter-rouge">jython</code> was only 1/3 of the normal
+time due to the missing write barrier handling.</p>
+
+<p>However, my PR changed the behaviour in some way, and the bug was somehow not
+triggered when running on the test machines in the lab.  And the sub-optimal
+implementation of the <code class="language-plaintext highlighter-rouge">ProcessRegionModBuf</code> work packet stuffed all the array
+slices delivered from barriers into one single vector, making it impossible to
+parallelise.  It gave us a false impression that my PR made the <code class="language-plaintext highlighter-rouge">jython</code>
+benchmark 3x slower on the lab machines.</p>
+
+<p>And due to non-determinism, the bug was still reproducible on my laptop with my
+PR applied.  That was why I saw the 3x slow-down on the lab machines but not on
+my laptop.</p>
+
+<h2 id="what-did-i-learn">What did I learn?</h2>
+
+<p>There is a saying that ‘One can not optimise things that one can not measure’.  It
+is very true.  I can hypothesise what caused the performance problem, but I can
+never be sure unless I verify it with experiment.  In this example, I first
+thought the slow-down was just some random behaviour of the <code class="language-plaintext highlighter-rouge">jython</code> benchmark.
+I then thought the slow-down was due to excessive finalization.  But experiments
+showed that the actual cause was a bug in the write barrier.</p>
+
+<p>And the visualisation tool is a very useful one.  It first showed me that some
+GCs took longer time due to finalisation, and it then showed me that there were
+even longer GCs due to buggy and sub-optimal write barrier handling.  It is such
+a useful tool because with the timeline in front of me, I no longer need to
+guess what slowed things down.  I just look at the timeline, and the work packet
+that becomes the bottleneck will stand out of the crowd.  Since the eBPF-based
+tracing and visualisation tool was created, I have been using it to debug many
+performance issues in GC, including the execution of <code class="language-plaintext highlighter-rouge">obj_free</code>, various weak
+table processing tasks, and the load-balancing problems in the <a href="https://github.com/mmtk/mmtk-ruby">MMTk-Ruby
+binding</a>.</p>
+
+<p>For example, if you see the following timeline, you know the handling of
+<code class="language-plaintext highlighter-rouge">obj_free</code> is the bottleneck.</p>
+
+<p><img src="/assets/img/proved-me-wrong/ruby-obj-free.png" alt="`obj_free` was the bottleneck in MMTk-Ruby" /></p>
+
+<p>When I see the following timeline (with manual annotation of which work packet
+created which), I know the load balancing of the transitive closure stage needs
+to be improved.</p>
+
+<p><img src="/assets/img/proved-me-wrong/ruby-load-balance.png" alt="bad load-balance during transitive closure" /></p>
+
+<p>And when I see the following timeline, I know the general load balancing is
+improved, but some objects take significantly longer to scan than other objects,
+and we should focus on those objects because they are the bottleneck.</p>
+
+<p><img src="/assets/img/proved-me-wrong/ruby-scan-object.png" alt="some objects took longer to scan" /></p>
+
+<h2 id="the-tool">The tool</h2>
+
+<p>I thank Claire Huang, <a href="https://www.zcai.org/">Zixian Cai</a> and Prof. <a href="https://users.cecs.anu.edu.au/~steveb/">Steve Blackburn</a> for creating such
+a useful tool.</p>
+
+<p>The code has been <a href="https://github.com/mmtk/mmtk-core/commit/b6ffcddeef2407ed910dc1ef98e0d038cc4a1eb6">merged</a> into the master branch of <a href="https://github.com/mmtk/mmtk-core">mmtk-core</a>.
+Related tools and documentation can be found in <a href="https://github.com/mmtk/mmtk-core/tree/master/tools/tracing">this directory</a>.</p>
+
+<p>The paper that describes this work has been accepted and will be published <a href="https://2023.splashcon.org/details/mplr-2023-papers/11/Improving-Garbage-Collection-Observability-with-Performance-Tracing">in
+the MPLR 2023 conference</a></p>
+
+<!--
+vim: tw=80
+-->
+
+
+
+  <small>tags: <em>mmtk,ebpf,perfetto</em></small>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#table-of-contents').toc({
+        title: "",
+        showEffect: 'none'
+    });
+
+    $('#toc-toggle').click(function() {
+        $('#table-of-contents').toggle();
+        return false;
+    });
+});
+</script>
+
+      </section>
+    </div>
+  </body>
+</html>
