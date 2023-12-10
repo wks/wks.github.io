@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <link rel="stylesheet" href="/assets/css/style-custom.css?v=">
+<script type="text/javascript" src="/assets/js/jquery-3.6.0.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/assets/js/toc.js" charset="utf-8"></script>
+
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>SDDM + KDE Plasma Wayland Frozen After Login | Kunshan Wang</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="SDDM + KDE Plasma Wayland Frozen After Login" />
+<meta name="author" content="Kunshan Wang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I could not log into my computer this morning. I was using SDDM + KDE Plasma with Wayland. When I typed my password and pressed ENTER, it stopped responding. The screen remained on the log-in screen, but the mouse cursor disappeared. I tried to switch terminal using CTRL+ALT+Fx (x = 2, 3, …, 8), but that didn’t work, either. What was wrong with it? I kept trying and eventually got the answer." />
+<meta property="og:description" content="I could not log into my computer this morning. I was using SDDM + KDE Plasma with Wayland. When I typed my password and pressed ENTER, it stopped responding. The screen remained on the log-in screen, but the mouse cursor disappeared. I tried to switch terminal using CTRL+ALT+Fx (x = 2, 3, …, 8), but that didn’t work, either. What was wrong with it? I kept trying and eventually got the answer." />
+<link rel="canonical" href="https://wks.github.io/blog/2023/12/10/plasmawayland-frozen-after-login.html" />
+<meta property="og:url" content="https://wks.github.io/blog/2023/12/10/plasmawayland-frozen-after-login.html" />
+<meta property="og:site_name" content="Kunshan Wang" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-12-10T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="SDDM + KDE Plasma Wayland Frozen After Login" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Kunshan Wang"},"dateModified":"2023-12-10T00:00:00+00:00","datePublished":"2023-12-10T00:00:00+00:00","description":"I could not log into my computer this morning. I was using SDDM + KDE Plasma with Wayland. When I typed my password and pressed ENTER, it stopped responding. The screen remained on the log-in screen, but the mouse cursor disappeared. I tried to switch terminal using CTRL+ALT+Fx (x = 2, 3, …, 8), but that didn’t work, either. What was wrong with it? I kept trying and eventually got the answer.","headline":"SDDM + KDE Plasma Wayland Frozen After Login","mainEntityOfPage":{"@type":"WebPage","@id":"https://wks.github.io/blog/2023/12/10/plasmawayland-frozen-after-login.html"},"url":"https://wks.github.io/blog/2023/12/10/plasmawayland-frozen-after-login.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <a id="a-title" href="/">
+          <h1>Kunshan Wang</h1>
+        </a>
+        <h2>Kunshan Wang's Personal Web Site</h2>
+
+        <section id="downloads">
+          <a href="/blog/">Blog</a>
+          <a href="/feed.xml">Feed</a>
+          <a href="/downloads.html">Downloads</a>
+          <a href="https://github.com/wks" class="btn btn-github"><span class="icon"></span>My GitHub Profile</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <small>2023-12-10</small>
+<h1>SDDM + KDE Plasma Wayland Frozen After Login</h1>
+
+<p class="view">by Kunshan Wang</p>
+
+<div id="table-of-contents-box">
+    <div class="toc-title">Table of contents <a id="toc-toggle" href="">[show/hide]</a></div>
+    <div id="table-of-contents"></div>
+</div>
+
+<p>I could not log into my computer this morning.  I was using <a href="https://github.com/sddm/sddm">SDDM</a> + <a href="https://kde.org/">KDE</a>
+<a href="https://kde.org/plasma-desktop/">Plasma</a> with <a href="https://community.kde.org/KWin/Wayland">Wayland</a>.  When I typed my password and pressed ENTER, it stopped
+responding.  The screen remained on the log-in screen, but the mouse cursor
+disappeared.  I tried to switch terminal using CTRL+ALT+Fx (x = 2, 3, …, 8),
+but that didn’t work, either.  What was wrong with it?  I kept trying and
+eventually got the answer.</p>
+
+<h1 id="rescue">Rescue</h1>
+
+<p>Since CTRL+ALT+Fx didn’t work, I tried to log into my machine from another
+machine via SSH.  It worked.  I managed to get a shell, and restarted SDDM using
+<code class="language-plaintext highlighter-rouge">sudo systemctl restart sddm</code>.  Then my computer became responsive again.</p>
+
+<h1 id="what-was-wrong">What was wrong?</h1>
+
+<p>Many things could go wrong.  I updated quite some packages yesterday, and it was
+ArchLinux.  As a rolling Linux distribution, any update could render the system
+unusable.  But when I visited <a href="https://archlinux.org/">https://archlinux.org/</a>, no recent news mentioned
+anything that needed manual intervention.</p>
+
+<p>I was using NVidia’s open source driver (the <a href="https://archlinux.org/packages/extra/x86_64/nvidia-open/"><code class="language-plaintext highlighter-rouge">nvidia-open</code></a> package).  Could
+that be a problem?  I uninstalled that package and rebooted.  It would still be
+frozen after logging in.  So the display driver was not the problem.</p>
+
+<p>I was using KDE Plasma Wayland session.  Could that be a problem?  I tried to
+start the session by typing <code class="language-plaintext highlighter-rouge">startplasma-wayland</code> on a TTY, and that started the
+session successfully for me.  So Plasma Wayland may not be the problem.</p>
+
+<p>I was using SDDM, the default display manager for KDE Plasma.  Could that be a
+problem?  I installed LXDM.  LXDM could start the Plasma X11 session, but it was
+incapable of starting any Wayland sessions.  I installed LightDM, but for some
+reasons it failed to start.  I installed GDM.  It could start the GNOME session,
+but it didn’t detect the presence of Plasma Wayland.  In the end, I couldn’t
+find any display manager that could start the Plasma Wayland session besides
+SDDM.  It could be SDDM’s problem, but I couldn’t confirm it.</p>
+
+<p>I tried to created another user, and tried to log in and start the Plasma
+Wayland session via SDDM.  Surprisingly, it worked.  It gave my new user a
+desktop with default settings.  This meant the problem was probably with my
+personal configuration.</p>
+
+<p>What configuration?</p>
+
+<p>I was using <a href="https://fishshell.com">Fish</a> as my default shell.  I used <code class="language-plaintext highlighter-rouge">chsh</code> to
+change my default shell to Bash, and tried to log in.  It worked.  It logged
+into the Plasma Wayland session successfully.  So it narrowed down the problem
+with my Fish configuration.</p>
+
+<p>I moved my entire Fish configuration directory <code class="language-plaintext highlighter-rouge">~/.config/fish</code> away, and
+attempted to login.  It worked.  That further confirmed that one (or more) of
+my Fish configuration file was wrong.  Which one was it?</p>
+
+<p>I tried to move my configuration files one by one from my backup location back
+to <code class="language-plaintext highlighter-rouge">~/.config/fish</code>.  It ended up that the file <code class="language-plaintext highlighter-rouge">fish_variables</code> was the
+culprit.</p>
+
+<p>I then tried to gradually remove the lines from <code class="language-plaintext highlighter-rouge">fish_variables</code>.  In the end,
+the culprit was the following line:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SETUVAR --export UID:1000
+</code></pre></div></div>
+
+<p>It is a universal variable.  It means it could have been set at any moment in
+the past, and it persisted until today and caused the failure.</p>
+
+<h1 id="solution">Solution</h1>
+
+<p>Removing the universal variable <code class="language-plaintext highlighter-rouge">UID</code> solved the problem, but I still don’t
+understand why that variable was set in the first place.  And I don’t know why
+it was frozen when the <code class="language-plaintext highlighter-rouge">UID</code> environment variable was set.  Actually I don’t
+know exactly what was frozen, the SDDM, or something in the Plasma Wayland
+session.</p>
+
+
+
+
+  <small>tags: <em>kde,wayland</em></small>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#table-of-contents').toc({
+        title: "",
+        showEffect: 'none'
+    });
+
+    $('#toc-toggle').click(function() {
+        $('#table-of-contents').toggle();
+        return false;
+    });
+});
+</script>
+
+      </section>
+    </div>
+  </body>
+</html>
