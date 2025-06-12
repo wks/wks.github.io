@@ -12,7 +12,7 @@
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Home | Kunshan Wang</title>
-<meta name="generator" content="Jekyll v4.3.3" />
+<meta name="generator" content="Jekyll v4.4.1" />
 <meta property="og:title" content="Home" />
 <meta name="author" content="Kunshan Wang" />
 <meta property="og:locale" content="en_US" />
@@ -50,11 +50,7 @@
 
     <div class="container">
       <section id="main_content">
-        <p><small> Psssssst! I have an unofficial <a href="/downloads.html">BitTorrent file</a> for The
-DaCapo Benchmark Suite 23.11-chopin.  Try it if the official download link is
-too slow for you.</small></p>
-
-<h2>Recent blog</h2>
+        <h2>Recent blog</h2>
 
 <ul class="blog-post-list recent">
   
@@ -110,7 +106,51 @@ counting</a> as the garbage collection mechanism.</p>
 
     <li class="publication-item">
         <div class="publication-line">
-            <span class="publication-list-author">Kunshan Wang, Stephen M Blackburn, Antony L Hosking and Michael Norrish</span>,
+            <span class="publication-list-author">Kunshan Wang, Stephen M. Blackburn, Peter Zhu and Matthew Valentine-House</span>,
+            "<span class="publication-list-title">Reworking Memory Management in CRuby: A Practitioner Report</span>,"
+            
+            in <span class="publication-list-in">Proceedings of the 2025 ACM SIGPLAN International Symposium on Memory Management (ISMM'25)</span>,
+            
+            <span class="publication-list-year">2025</span>.
+            <span class="publication-list-abs-tog"><a class="abstract-toggle" href="#abstract-WBZ25">abstract</a></span>
+            <span class="publication-list-pdf"><a href="/downloads/pdf/ruby-ismm-2025.pdf">pdf</a></span>
+            
+            <span class="publication-list-doi"><a href="https://doi.org/10.1145/3735950.3735960">doi</a></span>
+            
+            
+        </div>
+        <div class="publication-abstract" id="abstract-WBZ25">
+            <p>Ruby is a dynamic programming language that was first released in 1995 and
+remains heavily used today. Ruby underpins Ruby on Rails, one of the most widely
+deployed web application frameworks. The scale at which Rails is deployed has
+placed increasing pressure on the underlying CRuby implementation, and in
+particular its approach to memory management. CRuby implements a mark-sweep
+garbage collector which until recently was non-moving and only allocated
+fixed-size 40-byte objects, falling back to malloc to manage all larger objects.</p>
+
+<p>This paper reports on a multi-year academic-industrial collaboration to rework
+CRuby’s approach to memory management with the goal of introducing modularity
+and the ability to incorporate modern high performance garbage collection
+algorithms. This required identifying and addressing deeply ingrained
+assumptions across many aspects of the CRuby runtime. We describe the
+longstanding CRuby implementation and enumerate core challenges we faced and
+lessons they offer.</p>
+
+<p>Our work has been embraced by the Ruby community, and the refactorings and new
+garbage collection interface we describe have been upstreamed.</p>
+
+<p>We look forward to this work being used to deploy a new class of garbage
+collectors for Ruby. We hope that this paper will provide important lessons and
+insights for Ruby developers, garbage collection researchers and language
+designers.</p>
+
+
+        </div>
+    </li>
+
+    <li class="publication-item">
+        <div class="publication-line">
+            <span class="publication-list-author">Kunshan Wang, Stephen M. Blackburn, Antony L. Hosking and Michael Norrish</span>,
             "<span class="publication-list-title">Hop, Skip, &amp; Jump: Practical On-Stack Replacement for a Cross-Platform Language-Neutral VM</span>,"
             
             in <span class="publication-list-in">14th ACM SIGPLAN/SIGOPS International Conference on Virtual Execution Environments (VEE 2018), March 24–25, 2018, Williamsburg, VA, USA.</span>,
@@ -118,8 +158,12 @@ counting</a> as the garbage collection mechanism.</p>
             <span class="publication-list-year">2018</span>.
             <span class="publication-list-abs-tog"><a class="abstract-toggle" href="#abstract-WBH18">abstract</a></span>
             <span class="publication-list-pdf"><a href="/downloads/pdf/osr-vee-2018.pdf">pdf</a></span>
+            
             <span class="publication-list-doi"><a href="https://doi.org/10.1145/3296975.3186412">doi</a></span>
+            
+            
             <span class="publication-list-url"><a href="https://dl.acm.org/doi/10.1145/3296975.3186412">link</a></span>
+            
         </div>
         <div class="publication-abstract" id="abstract-WBH18">
             <p>On-stack replacement (OSR) is a performance-critical technology for many
@@ -128,14 +172,15 @@ JavaScript engines such as V8 and SpiderMonkey, is that OSR must be implemented
 in a low-level (i.e., in assembly) and language-specific way.</p>
 
 <p>This paper presents an OSR abstraction based on Swapstack, materialized as the
-API for a low-level virtual machine, and shows how the abstraction of
-resumption protocols facilitates an elegant implementation of this API on real
-hardware. Using an experimental JavaScript implementation, we demonstrate that
-this API enables the language implementation to perform OSR without the need to
-deal with machine-level details. We also show that the API itself is
-implementable on concrete hardware. This work helps crystallize OSR
-abstractions and, by providing a reusable implementation, brings OSR within
-reach for more language implementers.</p>
+API for a low-level virtual machine, and shows how the abstraction of resumption
+protocols facilitates an elegant implementation of this API on real hardware.
+Using an experimental JavaScript implementation, we demonstrate that this API
+enables the language implementation to perform OSR without the need to deal with
+machine-level details. We also show that the API itself is implementable on
+concrete hardware. This work helps crystallize OSR abstractions and, by
+providing a reusable implementation, brings OSR within reach for more language
+implementers.</p>
+
 
         </div>
     </li>
@@ -150,8 +195,12 @@ reach for more language implementers.</p>
             <span class="publication-list-year">2017</span>.
             <span class="publication-list-abs-tog"><a class="abstract-toggle" href="#abstract-Wang2017">abstract</a></span>
             <span class="publication-list-pdf"><a href="/downloads/pdf/wang-thesis-2018.pdf">pdf</a></span>
+            
             <span class="publication-list-doi"><a href="https://doi.org/10.25911/5d612129114fa">doi</a></span>
+            
+            
             <span class="publication-list-url"><a href="https://openresearch-repository.anu.edu.au/items/f98287f0-6fd7-44af-891a-ae0328a37e28">link</a></span>
+            
         </div>
         <div class="publication-abstract" id="abstract-Wang2017">
             <p>Today new programming languages proliferate, but many of them suffer from poor
@@ -163,44 +212,42 @@ of efficiently developing high-level managed languages.</p>
 <p>Modern high-level languages provide abstractions over execution, memory
 management and concurrency. It requires enormous intellectual capability and
 engineering effort to properly manage these concerns.  Lacking such resources,
-developers usually choose naive implementation approaches in the early stages
-of language design, a strategy which too often has long-term consequences,
-hindering the future development of the language.  Existing language
-development platforms have failed to provide the right level of abstraction,
-and forced implementers to reinvent low-level mechanisms in order to obtain
-performance.</p>
+developers usually choose naive implementation approaches in the early stages of
+language design, a strategy which too often has long-term consequences,
+hindering the future development of the language.  Existing language development
+platforms have failed to provide the right level of abstraction, and forced
+implementers to reinvent low-level mechanisms in order to obtain performance.</p>
 
 <p>My thesis is that the introduction of micro virtual machines will allow the
 development of higher-quality, high-performance managed languages.</p>
 
 <p>The first contribution of this thesis is the design of Mu, with the
-specification of Mu as the main outcome.  Mu is the first micro virtual
-machine, a robust, performant, and light-weight abstraction over just three
-concerns: execution, concurrency and garbage collection.  Such a foundation
-attacks three of the most fundamental and challenging issues that face existing
-language designs and implementations, leaving the language implementers free to
-focus on the higher levels of their language design.</p>
+specification of Mu as the main outcome.  Mu is the first micro virtual machine,
+a robust, performant, and light-weight abstraction over just three concerns:
+execution, concurrency and garbage collection.  Such a foundation attacks three
+of the most fundamental and challenging issues that face existing language
+designs and implementations, leaving the language implementers free to focus on
+the higher levels of their language design.</p>
 
 <p>The second contribution is an in-depth analysis of on-stack replacement and its
 efficient implementation.  This low-level mechanism underpins run-time
 feedback-directed optimisation, which is key to the efficient implementation of
 dynamic languages.</p>
 
-<p>The third contribution is demonstrating the viability of Mu through RPython,
-a real-world non-trivial language implementation.  We also did some preliminary
+<p>The third contribution is demonstrating the viability of Mu through RPython, a
+real-world non-trivial language implementation.  We also did some preliminary
 research of GHC as a Mu client.</p>
 
-<p>We have created the Mu specification and its reference implementation, both
-of which are open-source.  We show that that Mu’s on-stack replacement API can
-gracefully support dynamic languages such as JavaScript, and it is
-implementable on concrete hardware.  Our RPython client has been able to
-translate and execute non-trivial RPython programs, and can run the RPySOM
-interpreter and the core of the PyPy interpreter.</p>
+<p>We have created the Mu specification and its reference implementation, both of
+which are open-source.  We show that that Mu’s on-stack replacement API can
+gracefully support dynamic languages such as JavaScript, and it is implementable
+on concrete hardware.  Our RPython client has been able to translate and execute
+non-trivial RPython programs, and can run the RPySOM interpreter and the core of
+the PyPy interpreter.</p>
 
-<p>With micro virtual machines providing a low-level substrate, language
-developers now have the option to build their next language on a micro virtual
-machine.  We believe that the quality of programming languages will be improved
-as a result.</p>
+<p>With micro virtual machines providing a low-level substrate, language developers
+now have the option to build their next language on a micro virtual machine.  We
+believe that the quality of programming languages will be improved as a result.</p>
 
 
         </div>
@@ -208,7 +255,7 @@ as a result.</p>
 
     <li class="publication-item">
         <div class="publication-line">
-            <span class="publication-list-author">Yi Lin, Kunshan Wang, Stephen M Blackburn, Michael Norrish and Antony L Hosking</span>,
+            <span class="publication-list-author">Yi Lin, Kunshan Wang, Stephen M. Blackburn, Michael Norrish and Antony L. Hosking</span>,
             "<span class="publication-list-title">Stop and Go: Understanding Yieldpoint Behavior</span>,"
             
             in <span class="publication-list-in">Proceedings of the Fourteenth ACM SIGPLAN International Symposium on Memory Management (ISMM 2015), Portland, OR, June 14, 2015</span>,
@@ -216,8 +263,12 @@ as a result.</p>
             <span class="publication-list-year">2015</span>.
             <span class="publication-list-abs-tog"><a class="abstract-toggle" href="#abstract-LWB15">abstract</a></span>
             <span class="publication-list-pdf"><a href="/downloads/pdf/yieldpoint-ismm-2015.pdf">pdf</a></span>
+            
             <span class="publication-list-doi"><a href="https://doi.org/10.1145/2754169.2754187">doi</a></span>
+            
+            
             <span class="publication-list-url"><a href="https://dl.acm.org/doi/10.1145/2754169.2754187">link</a></span>
+            
         </div>
         <div class="publication-abstract" id="abstract-LWB15">
             <p>Yieldpoints are critical to the implementation of high performance garbage
@@ -226,18 +277,18 @@ allow a running program to be interrupted at well-defined points in its
 execution, facilitating exact garbage collection, biased locking, on-stack
 replacement, profiling, and other important virtual machine behaviors. In this
 paper we identify and evaluate yieldpoint design choices, including previously
-undocumented designs and optimizations. One of the designs we identify opens
-new opportunities for very low overhead profiling. We measure the frequency
-with which yieldpoints are executed and establish a methodology for evaluating
-the common case execution time overhead. We also measure the median and worst
-case time-to-yield. We find that Java benchmarks execute about 100 M
-yieldpoints per second, of which about 1/20000 are taken. The average execution
-time overhead for untaken yieldpoints on the VM we use ranges from 2.5% to
-close to zero on modern hardware, depending on the design, and we find that the
-designs trade off total overhead with worst case time-to-yield. This analysis
-gives new insight into a critical but overlooked aspect of garbage collector
-implementation, and identifies a new optimization and new opportunities for
-very low overhead profiling.</p>
+undocumented designs and optimizations. One of the designs we identify opens new
+opportunities for very low overhead profiling. We measure the frequency with
+which yieldpoints are executed and establish a methodology for evaluating the
+common case execution time overhead. We also measure the median and worst case
+time-to-yield. We find that Java benchmarks execute about 100 M yieldpoints per
+second, of which about 1/20000 are taken. The average execution time overhead
+for untaken yieldpoints on the VM we use ranges from 2.5% to close to zero on
+modern hardware, depending on the design, and we find that the designs trade off
+total overhead with worst case time-to-yield. This analysis gives new insight
+into a critical but overlooked aspect of garbage collector implementation, and
+identifies a new optimization and new opportunities for very low overhead
+profiling.</p>
 
 
         </div>
@@ -245,7 +296,7 @@ very low overhead profiling.</p>
 
     <li class="publication-item">
         <div class="publication-line">
-            <span class="publication-list-author">Kunshan Wang, Yi Lin, Stephen M Blackburn, Michael Norrish and Antony L Hosking</span>,
+            <span class="publication-list-author">Kunshan Wang, Yi Lin, Stephen M. Blackburn, Michael Norrish and Antony L. Hosking</span>,
             "<span class="publication-list-title">Draining the Swamp: Micro Virtual Machines as Solid Foundation for Language Development</span>,"
             
             in <span class="publication-list-in">1st Summit oN Advances in Programming Languages (SNAPL 2015)</span>,
@@ -253,8 +304,12 @@ very low overhead profiling.</p>
             <span class="publication-list-year">2015</span>.
             <span class="publication-list-abs-tog"><a class="abstract-toggle" href="#abstract-WLB15">abstract</a></span>
             <span class="publication-list-pdf"><a href="/downloads/pdf/uvm-snapl-2015.pdf">pdf</a></span>
+            
             <span class="publication-list-doi"><a href="https://doi.org/10.4230/LIPIcs.SNAPL.2015.321">doi</a></span>
+            
+            
             <span class="publication-list-url"><a href="https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.SNAPL.2015.321">link</a></span>
+            
         </div>
         <div class="publication-abstract" id="abstract-WLB15">
             <p>Many of today’s programming languages are broken. Poor performance, lack of
@@ -269,15 +324,16 @@ Concurrency, architectural details and garbage collection are three fundamental
 concerns that contribute much to the complexities of implementing managed
 languages.</p>
 
-<p>We propose the micro virtual machine, a thin abstraction designed
-specifically to relieve implementers of managed languages of the most
-fundamental implementation challenges that currently impede good design.  The
-micro virtual machine targets abstractions over memory (garbage collection),
-architecture (compiler backend), and concurrency. We motivate the micro virtual
-machine and give an account of the design and initial experience of a concrete
-instance, which we call Mu, built over a two year period. Our goal is to remove
-an important barrier to performant and semantically sound managed language
-design and implementation.</p>
+<p>We propose the micro virtual machine, a thin abstraction designed specifically
+to relieve implementers of managed languages of the most fundamental
+implementation challenges that currently impede good design.  The micro virtual
+machine targets abstractions over memory (garbage collection), architecture
+(compiler backend), and concurrency. We motivate the micro virtual machine and
+give an account of the design and initial experience of a concrete instance,
+which we call Mu, built over a two year period. Our goal is to remove an
+important barrier to performant and semantically sound managed language design
+and implementation.</p>
+
 
         </div>
     </li>
