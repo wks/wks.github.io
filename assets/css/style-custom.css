@@ -117,4 +117,20 @@ a code.highlighter-rouge {
   font-size: 90%;
 }
 
+figure.floating {
+  float: right;
+  clear: right;
+  width: 38.2%;
+}
+
+figure.floating.smaller {
+  width: 25%;
+}
+
+figure.block {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /*# sourceMappingURL=style-custom.css.map */
